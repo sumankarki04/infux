@@ -172,7 +172,7 @@
     <h5 class="fw-bold mb-2">No conversations yet</h5>
     {% if current_user.user_type == 'brand' %}
     <p class="text-muted mb-4">Connect with creators by browsing influencer profiles and starting a conversation.</p>
-    <a href="{{ url_for('public.discover') }}" class="btn btn-violet rounded-pill px-5">
+    <a href="{{ url_for('brand.my_campaigns') }}" class="btn btn-violet rounded-pill px-5">
       <i class="fas fa-search me-2"></i>Discover Creators
     </a>
     {% else %}
