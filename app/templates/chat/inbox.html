@@ -129,7 +129,7 @@
       <!-- Avatar + unread badge -->
       <div class="conv-avatar-wrap">
         <img
-          src="{{ url_for('static', filename='uploads/' + partner.profile_picture) }}"
+          src="{{ partner.avatar_url() }}"
           class="conv-avatar"
           alt="{{ partner.first_name }}"
           onerror="this.src='https://ui-avatars.com/api/?name={{ partner.first_name|urlencode }}+{{ partner.last_name|urlencode }}&background=7c3aed&color=fff&size=52'">

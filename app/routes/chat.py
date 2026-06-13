@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
 from app import db
@@ -30,7 +31,7 @@ def inbox():
                                          is_read=False).count()
         conversations.append({'partner': p, 'last_msg': last_msg, 'unread': unread})
 
-    conversations.sort(key=lambda x: x['last_msg'].created_at if x['last_msg'] else 0, reverse=True)
+    conversations.sort(key=lambda x: x['last_msg'].created_at if x['last_msg'] else datetime.min, reverse=True)
     return render_template('chat/inbox.html', conversations=conversations)
 
 
