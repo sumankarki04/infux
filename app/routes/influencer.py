@@ -98,7 +98,7 @@ def browse_campaigns():
 @require_influencer
 def apply(campaign_id):
     inf = current_user.influencer
-    campaign = Campaign.query.get_or_404(campaign_id)
+    campaign = db.get_or_404(Campaign, campaign_id)
 
     if Application.query.filter_by(campaign_id=campaign_id,
                                    influencer_id=inf.influencer_id).first():

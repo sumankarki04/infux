@@ -134,7 +134,7 @@ def campaign_detail(campaign_id):
 @login_required
 @require_brand
 def handle_application(application_id, action):
-    app = Application.query.get_or_404(application_id)
+    app = db.get_or_404(Application, application_id)
     if app.campaign.brand_id != current_user.brand.brand_id:
         flash('Not authorised.', 'danger')
         return redirect(url_for('brand.dashboard'))

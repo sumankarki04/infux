@@ -52,7 +52,7 @@ def influencers():
 @login_required
 @require_admin
 def verify_influencer(inf_id):
-    inf = Influencer.query.get_or_404(inf_id)
+    inf = db.get_or_404(Influencer, inf_id)
     action = request.form.get('action')
     if action == 'approve':
         inf.verification_status = 'verified'
@@ -76,7 +76,7 @@ def brands():
 @login_required
 @require_admin
 def toggle_brand(brand_id):
-    br = Brand.query.get_or_404(brand_id)
+    br = db.get_or_404(Brand, brand_id)
     br.is_verified = not br.is_verified
     db.session.commit()
     flash('Brand status updated.', 'info')
@@ -108,7 +108,7 @@ def users():
 @login_required
 @require_admin
 def toggle_user(user_id):
-    user = User.query.get_or_404(user_id)
+    user = db.get_or_404(User, user_id)
     user.is_active = not user.is_active
     db.session.commit()
     flash(f'User {"activated" if user.is_active else "suspended"}.', 'info')

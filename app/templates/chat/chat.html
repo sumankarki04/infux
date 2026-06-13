@@ -111,8 +111,8 @@
                 msgs.forEach(function(m) {
                     if (m.sender_id !== MY_ID) {
                         appendMsg(m.id, m.content, m.sender_id, m.created_at);
-                        lastId = m.id;
                     }
+                    if (m.id > lastId) lastId = m.id;
                 });
             }
         } catch(e) {}

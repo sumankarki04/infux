@@ -66,7 +66,7 @@ def send(partner_id):
     if len(content) > 2000:
         return jsonify({'error': 'too long'}), 400
 
-    partner = User.query.get(partner_id)
+    partner = User.query.filter_by(user_id=partner_id).first()
     if not partner:
         return jsonify({'error': 'not found'}), 404
 
