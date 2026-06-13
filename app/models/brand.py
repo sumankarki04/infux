@@ -6,7 +6,7 @@ class Brand(db.Model):
     __tablename__ = 'brands'
 
     brand_id     = db.Column(db.Integer, primary_key=True)
-    user_id      = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    user_id      = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False, unique=True)
     company_name = db.Column(db.String(120), nullable=False)
     industry     = db.Column(db.String(60))
     website      = db.Column(db.String(200))
@@ -16,5 +16,10 @@ class Brand(db.Model):
     created_at   = db.Column(db.DateTime, default=datetime.utcnow)
 
     campaigns        = db.relationship('Campaign', backref='brand', lazy=True)
-    reviews_received = db.relationship('Review', foreign_keys='Review.reviewee_id',
-                                       overlaps='reviewee', lazy=True)
+    reviews_received = db.relationship(
+        'Review',
+        primaryjoin='Brand.user_id == foreign(Review.reviewee_id)',
+        backref='brand_reviewee',
+        lazy=True,
+        viewonly=True,
+    )

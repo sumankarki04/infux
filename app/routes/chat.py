@@ -38,7 +38,7 @@ def inbox():
 @chat_bp.route('/<int:partner_id>')
 @login_required
 def chat(partner_id):
-    partner = User.query.get_or_404(partner_id)
+    partner = User.query.filter_by(user_id=partner_id).first_or_404()
     messages = Message.query.filter(
         db.or_(
             db.and_(Message.sender_id == current_user.user_id,   Message.receiver_id == partner_id),

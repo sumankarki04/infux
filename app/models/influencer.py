@@ -6,7 +6,7 @@ class Influencer(db.Model):
     __tablename__ = 'influencers'
 
     influencer_id      = db.Column(db.Integer, primary_key=True)
-    user_id            = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    user_id            = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False, unique=True)
     bio                = db.Column(db.Text)
     niche              = db.Column(db.String(60))   # tech, fashion, food, travel, etc.
     instagram_handle   = db.Column(db.String(80))
@@ -26,7 +26,13 @@ class Influencer(db.Model):
     created_at         = db.Column(db.DateTime, default=datetime.utcnow)
 
     applications = db.relationship('Application', backref='influencer', lazy=True)
-    reviews_received = db.relationship('Review', foreign_keys='Review.reviewee_id', backref='reviewee', lazy=True)
+    reviews_received = db.relationship(
+        'Review',
+        primaryjoin='Influencer.user_id == foreign(Review.reviewee_id)',
+        backref='influencer_reviewee',
+        lazy=True,
+        viewonly=True,
+    )
 
     def total_followers(self):
         return (self.instagram_followers or 0) + (self.tiktok_followers or 0) + \
