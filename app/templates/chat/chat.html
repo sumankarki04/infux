@@ -9,7 +9,7 @@
         </a>
         <img src="{{ partner.avatar_url() }}" class="rounded-circle"
              style="width:42px;height:42px;object-fit:cover;border:2px solid var(--violet-lt);"
-             alt="">
+             alt="{{ partner.full_name() }}">
         <div>
             <div class="fw-bold" style="color:var(--navy);">{{ partner.full_name() }}</div>
             <div class="text-muted" style="font-size:.75rem;">{{ partner.user_type|title }}</div>
@@ -22,7 +22,7 @@
             <div class="d-flex flex-column {% if msg.sender_id == current_user.user_id %}align-items-end{% else %}align-items-start{% endif %}"
                  data-msg-id="{{ msg.message_id }}">
                 <div class="bubble {% if msg.sender_id == current_user.user_id %}bubble-me{% else %}bubble-them{% endif %}">
-                    {{ msg.content }}
+                    {{ msg.content | e }}
                 </div>
                 <div class="bubble-time {% if msg.sender_id == current_user.user_id %}text-end{% endif %}">
                     {{ msg.created_at.strftime('%H:%M') }}
@@ -40,8 +40,8 @@
         <div class="chat-input-wrap">
             <input type="text" id="msgInput" class="form-control rounded-pill"
                    placeholder="Type a message..." autocomplete="off" maxlength="2000">
-            <button id="sendBtn" class="btn btn-violet rounded-pill px-4" type="button">
-                <i class="fas fa-paper-plane"></i>
+            <button id="sendBtn" class="btn btn-violet rounded-pill px-4" type="button" aria-label="Send message">
+                <i class="fas fa-paper-plane" aria-hidden="true"></i>
             </button>
         </div>
     </div>
@@ -92,7 +92,11 @@
                 const msg = await r.json();
                 appendMsg(msg.id, msg.content, msg.sender_id, msg.created_at);
                 lastId = msg.id;
+            } else {
+                input.value = content;
             }
+        } catch(e) {
+            input.value = content;
         } finally {
             sendBtn.disabled = false;
             input.focus();
