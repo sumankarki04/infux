@@ -100,12 +100,22 @@ def create_campaign():
             return render_template('brand/create_campaign.html', niches=NICHES, platforms=PLATFORMS)
 
         try:
-            budget       = float(request.form.get('budget', 0) or 0)
+            budget        = float(request.form.get('budget', 0) or 0)
             min_followers = int(request.form.get('min_followers', 0) or 0)
             max_followers = int(request.form.get('max_followers', 0) or 0)
             deadline = datetime.strptime(deadline_str, '%Y-%m-%d').date() if deadline_str else None
         except (ValueError, TypeError):
             flash('Invalid number or date.', 'danger')
+            return render_template('brand/create_campaign.html', niches=NICHES, platforms=PLATFORMS)
+
+        if budget <= 0:
+            flash('Budget must be greater than 0.', 'danger')
+            return render_template('brand/create_campaign.html', niches=NICHES, platforms=PLATFORMS)
+        if max_followers and min_followers > max_followers:
+            flash('Min followers cannot exceed max followers.', 'danger')
+            return render_template('brand/create_campaign.html', niches=NICHES, platforms=PLATFORMS)
+        if deadline and deadline < datetime.utcnow().date():
+            flash('Deadline cannot be in the past.', 'danger')
             return render_template('brand/create_campaign.html', niches=NICHES, platforms=PLATFORMS)
 
         c = Campaign(brand_id=br.brand_id, title=title, description=description,
@@ -118,7 +128,7 @@ def create_campaign():
         flash('Campaign created!', 'success')
         return redirect(url_for('brand.my_campaigns'))
 
-    return render_template('brand/create_campaign.html', niches=NICHES, platforms=PLATFORMS)
+    return render_template('brand/create_campaign.html', niches=NICHES, platforms=PLATFORMS, now=datetime.utcnow())
 
 
 @brand_bp.route('/campaigns/<int:campaign_id>')

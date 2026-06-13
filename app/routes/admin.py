@@ -39,13 +39,19 @@ def dashboard():
                            recent_users=recent_users, recent_campaigns=recent_campaigns)
 
 
+PER_PAGE = 25
+
+
 @admin_bp.route('/influencers')
 @login_required
 @require_admin
 def influencers():
     status = request.args.get('status', 'pending')
-    influencers = Influencer.query.filter_by(verification_status=status).all()
-    return render_template('admin/influencers.html', influencers=influencers, status=status)
+    page = request.args.get('page', 1, type=int)
+    pagination = Influencer.query.filter_by(verification_status=status)\
+                    .paginate(page=page, per_page=PER_PAGE, error_out=False)
+    return render_template('admin/influencers.html', influencers=pagination.items,
+                           status=status, pagination=pagination)
 
 
 @admin_bp.route('/influencers/<int:inf_id>/verify', methods=['POST'])
@@ -68,8 +74,10 @@ def verify_influencer(inf_id):
 @login_required
 @require_admin
 def brands():
-    brands = Brand.query.order_by(Brand.created_at.desc()).all()
-    return render_template('admin/brands.html', brands=brands)
+    page = request.args.get('page', 1, type=int)
+    pagination = Brand.query.order_by(Brand.created_at.desc())\
+                    .paginate(page=page, per_page=PER_PAGE, error_out=False)
+    return render_template('admin/brands.html', brands=pagination.items, pagination=pagination)
 
 
 @admin_bp.route('/brands/<int:brand_id>/toggle', methods=['POST'])
@@ -88,11 +96,14 @@ def toggle_brand(brand_id):
 @require_admin
 def campaigns():
     status = request.args.get('status', 'all')
+    page = request.args.get('page', 1, type=int)
     query = Campaign.query
     if status != 'all':
         query = query.filter_by(status=status)
-    campaigns = query.order_by(Campaign.created_at.desc()).all()
-    return render_template('admin/campaigns.html', campaigns=campaigns, status=status)
+    pagination = query.order_by(Campaign.created_at.desc())\
+                    .paginate(page=page, per_page=PER_PAGE, error_out=False)
+    return render_template('admin/campaigns.html', campaigns=pagination.items,
+                           status=status, pagination=pagination)
 
 
 @admin_bp.route('/users')
@@ -100,8 +111,12 @@ def campaigns():
 @require_admin
 def users():
     user_type = request.args.get('type', 'influencer')
-    users = User.query.filter_by(user_type=user_type).order_by(User.created_at.desc()).all()
-    return render_template('admin/users.html', users=users, user_type=user_type)
+    page = request.args.get('page', 1, type=int)
+    pagination = User.query.filter_by(user_type=user_type)\
+                    .order_by(User.created_at.desc())\
+                    .paginate(page=page, per_page=PER_PAGE, error_out=False)
+    return render_template('admin/users.html', users=pagination.items,
+                           user_type=user_type, pagination=pagination)
 
 
 @admin_bp.route('/users/<int:user_id>/toggle', methods=['POST'])

@@ -50,7 +50,7 @@ def create_app():
     app.register_blueprint(chat_bp, url_prefix='/chat')
     app.register_blueprint(payments_bp, url_prefix='/pay')
 
-    csrf.exempt(chat_bp)
+    csrf.exempt(chat_bp)  # send uses JSON + X-CSRFToken header; GET poll needs no CSRF
 
     with app.app_context():
         from app.models import payment  # noqa: ensure Payment table created

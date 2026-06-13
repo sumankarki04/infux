@@ -28,13 +28,13 @@ class Config:
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
 
-    # eSewa (sandbox by default)
+    # eSewa
     ESEWA_URL          = os.environ.get('ESEWA_URL', 'https://rc-epay.esewa.com.np/api/epay/main/v2/form')
-    ESEWA_SECRET       = os.environ.get('ESEWA_SECRET', '8gBm/:&EnhH.1/q')
+    ESEWA_SECRET       = os.environ.get('ESEWA_SECRET', '')
     ESEWA_PRODUCT_CODE = os.environ.get('ESEWA_PRODUCT_CODE', 'EPAYTEST')
 
-    # Khalti (sandbox by default)
-    KHALTI_SECRET_KEY   = os.environ.get('KHALTI_SECRET_KEY', 'test_secret_key_dc74e0fd57cb46cd93832aee0a390234')
+    # Khalti
+    KHALTI_SECRET_KEY   = os.environ.get('KHALTI_SECRET_KEY', '')
     KHALTI_INITIATE_URL = os.environ.get('KHALTI_INITIATE_URL', 'https://a.khalti.com/api/v2/epayment/initiate/')
     KHALTI_LOOKUP_URL   = os.environ.get('KHALTI_LOOKUP_URL',   'https://a.khalti.com/api/v2/epayment/lookup/')
 

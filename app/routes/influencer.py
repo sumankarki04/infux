@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
-from app import db
+from app import db, limiter
 from app.models.campaign import Campaign
 from app.models.application import Application
 from app.models.influencer import Influencer
@@ -96,6 +96,7 @@ def browse_campaigns():
 @influencer_bp.route('/apply/<int:campaign_id>', methods=['POST'])
 @login_required
 @require_influencer
+@limiter.limit("20 per hour")
 def apply(campaign_id):
     inf = current_user.influencer
     campaign = db.get_or_404(Campaign, campaign_id)

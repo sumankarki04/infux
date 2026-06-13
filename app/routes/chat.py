@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
-from app import db
+from app import db, limiter
 from app.models.user import User
 from app.models.message import Message
 from app.utils.helpers import clean
@@ -58,6 +58,7 @@ def chat(partner_id):
 
 @chat_bp.route('/<int:partner_id>/send', methods=['POST'])
 @login_required
+@limiter.limit("60 per minute")
 def send(partner_id):
     data    = request.get_json(silent=True) or {}
     content = clean(data.get('content', ''))

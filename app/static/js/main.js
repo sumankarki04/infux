@@ -61,11 +61,23 @@ document.querySelectorAll('.alert-dismissible').forEach(alert => {
     }, 4000);
 });
 
-// Confirm actions
+// Confirm actions (works on both links and form submit buttons)
 document.querySelectorAll('[data-confirm]').forEach(el => {
     el.addEventListener('click', e => {
-        if (!confirm(el.dataset.confirm)) e.preventDefault();
+        if (!confirm(el.dataset.confirm)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+        }
     });
+    // Also intercept parent form submission when triggered via this button
+    const form = el.closest('form');
+    if (form && (el.type === 'submit' || el.tagName === 'BUTTON')) {
+        form.addEventListener('submit', ev => {
+            if (form._confirmOk) { form._confirmOk = false; return; }
+            ev.preventDefault();
+            if (confirm(el.dataset.confirm)) { form._confirmOk = true; form.submit(); }
+        });
+    }
 });
 
 // AOS init

@@ -45,11 +45,13 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Budget (Rs) <span class="text-danger">*</span></label>
-                    <input type="number" name="budget" class="form-control" required min="0" placeholder="e.g. 25000">
+                    <input type="number" name="budget" class="form-control" required min="1" placeholder="e.g. 25000">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Deadline</label>
-                    <input type="date" name="deadline" class="form-control">
+                    <input type="date" name="deadline" class="form-control"
+                           min="{{ now.strftime('%Y-%m-%d') if now else '' }}"
+                           id="deadlineInput">
                 </div>
                 <div class="col-12">
                     <label class="form-label">Deliverables</label>
