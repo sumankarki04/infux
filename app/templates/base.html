@@ -9,7 +9,7 @@
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- Icons & Libs -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -42,7 +42,7 @@
                 <div class="dropdown">
                     <button class="btn btn-sm btn-outline-light rounded-pill dropdown-toggle d-flex align-items-center gap-2"
                             type="button" data-bs-toggle="dropdown">
-                        <img src="{{ url_for('static', filename='uploads/' + current_user.profile_picture) }}"
+                        <img src="{{ current_user.avatar_url() }}"
                              class="nav-avatar" alt="" onerror="this.src='https://ui-avatars.com/api/?name={{ current_user.first_name }}&background=7c3aed&color=fff&size=34'">
                         {{ current_user.first_name }}
                     </button>

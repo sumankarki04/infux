@@ -154,10 +154,17 @@
                                     </form>
                                 </div>
                                 {% elif app.status == 'accepted' %}
-                                <a href="{{ url_for('chat.chat', partner_id=app.influencer.user_id) }}"
-                                   class="btn btn-sm btn-outline-violet rounded-pill px-3">
-                                    <i class="fas fa-comment me-1"></i>Message
-                                </a>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="{{ url_for('chat.chat', partner_id=app.influencer.user_id) }}"
+                                       class="btn btn-sm btn-outline-violet rounded-pill px-3">
+                                        <i class="fas fa-comment me-1"></i>Message
+                                    </a>
+                                    <a href="{{ url_for('payments.checkout', application_id=app.application_id) }}"
+                                       class="btn btn-sm rounded-pill px-3"
+                                       style="background:linear-gradient(135deg,#60BB46,#4a9a35);color:#fff;border:none;">
+                                        <i class="fas fa-money-bill-wave me-1"></i>Pay Now
+                                    </a>
+                                </div>
                                 {% endif %}
                             </div>
                         </div>

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Pay — {{ app_obj.campaign.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.pay-card {
+    background: #fff;
+    border: 1.5px solid #ede9fe;
+    border-radius: 24px;
+    padding: 2rem 2.25rem;
+    max-width: 540px;
+    margin: 0 auto;
+}
+.pay-method {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 1.1rem 1.25rem;
+    cursor: pointer;
+    transition: all .25s;
+    text-decoration: none;
+    color: inherit;
+}
+.pay-method:hover, .pay-method:focus {
+    border-color: var(--violet);
+    box-shadow: 0 4px 20px rgba(124,58,237,.12);
+    transform: translateY(-2px);
+}
+.pay-logo {
+    width: 56px;
+    height: 32px;
+    object-fit: contain;
+}
+.pay-amount {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--violet);
+}
+.esewa-btn  { background: #60BB46; border-color: #60BB46; color: #fff; }
+.khalti-btn { background: #5C2D91; border-color: #5C2D91; color: #fff; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="inner-banner">
+    <div class="container">
+        <div class="section-label mb-2">Payment</div>
+        <h1 class="mb-0" style="font-size:clamp(1.4rem,3vw,1.9rem);">
+            Pay for <span class="gradient-text">{{ app_obj.campaign.title }}</span>
+        </h1>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="pay-card" data-aos="fade-up">
+        {% if already_paid %}
+        <div class="alert alert-success rounded-3">
+            <i class="fas fa-check-circle me-2"></i>This application has already been paid.
+        </div>
+        <a href="{{ url_for('brand.campaign_detail', campaign_id=app_obj.campaign_id) }}"
+           class="btn btn-outline-violet rounded-pill mt-2">Back to Campaign</a>
+
+        {% else %}
+        <!-- Summary -->
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3"
+             style="border-bottom:1px solid #f3f4f6;">
+            <div>
+                <div class="text-muted small mb-1">Creator</div>
+                <div class="fw-bold">{{ app_obj.influencer.user.full_name() }}</div>
+            </div>
+            <div class="text-end">
+                <div class="text-muted small mb-1">Amount</div>
+                <div class="pay-amount">Rs. {{ '{:,.0f}'.format(app_obj.campaign.budget or 0) }}</div>
+            </div>
+        </div>
+
+        <h6 class="fw-bold mb-3" style="font-family:'Syne',sans-serif;letter-spacing:-.2px;">
+            Choose Payment Method
+        </h6>
+
+        <!-- eSewa -->
+        <form method="POST"
+              action="{{ url_for('payments.esewa_initiate', application_id=app_obj.application_id) }}"
+              class="mb-3">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="pay-method w-100 border-0 bg-transparent text-start">
+                <div class="d-flex align-items-center gap-3 flex-grow-1">
+                    <div style="width:56px;height:36px;background:#60BB46;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                        <span style="color:#fff;font-weight:800;font-size:.8rem;">eSewa</span>
+                    </div>
+                    <div>
+                        <div class="fw-bold small">Pay with eSewa</div>
+                        <div class="text-muted" style="font-size:.75rem;">Nepal's most popular digital wallet</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right text-muted ms-auto"></i>
+            </button>
+        </form>
+
+        <!-- Khalti -->
+        <form method="POST"
+              action="{{ url_for('payments.khalti_initiate', application_id=app_obj.application_id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="pay-method w-100 border-0 bg-transparent text-start">
+                <div class="d-flex align-items-center gap-3 flex-grow-1">
+                    <div style="width:56px;height:36px;background:#5C2D91;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                        <span style="color:#fff;font-weight:800;font-size:.8rem;">Khalti</span>
+                    </div>
+                    <div>
+                        <div class="fw-bold small">Pay with Khalti</div>
+                        <div class="text-muted" style="font-size:.75rem;">Fast, secure Nepali payments</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right text-muted ms-auto"></i>
+            </button>
+        </form>
+
+        <p class="text-muted text-center mt-4 mb-0" style="font-size:.78rem;">
+            <i class="fas fa-lock me-1" style="color:var(--violet);"></i>
+            Payments are processed securely. INFUX does not store card details.
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,53 +1,155 @@
 {% extends "base.html" %}
 {% block title %}INFUX — Nepal's Creator Marketplace{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Hero mosaic */
+.hero-mosaic {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+    max-width: 380px;
+    margin-left: auto;
+}
+.hero-creator-card {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    background: rgba(255,255,255,.06);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 16px;
+    padding: .85rem 1.1rem;
+    animation: cardFloat 6s ease-in-out infinite;
+}
+.hero-creator-card:nth-child(odd)  { margin-left: 0; }
+.hero-creator-card:nth-child(even) { margin-left: 2.5rem; }
+@keyframes cardFloat {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+}
+.hero-creator-card img {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(124,58,237,.5);
+    flex-shrink: 0;
+}
+.hero-cc-name { color: #fff; font-weight: 700; font-size: .87rem; }
+.hero-cc-niche { color: rgba(255,255,255,.45); font-size: .73rem; margin-top: .1rem; }
+.hero-mosaic-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: rgba(16,185,129,.15);
+    border: 1px solid rgba(16,185,129,.3);
+    color: #6ee7b7;
+    padding: .4rem .9rem;
+    border-radius: 50px;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    align-self: flex-start;
+    margin-top: .5rem;
+}
+
+/* How-it-works step */
+.how-step {
+    background: #fff;
+    border: 1.5px solid #ede9fe;
+    border-radius: 20px;
+    padding: 1.75rem 1.5rem;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+}
+.how-step:hover {
+    border-color: var(--violet);
+    box-shadow: 0 12px 36px rgba(124,58,237,.1);
+    transform: translateY(-4px);
+}
+.how-step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: rgba(124,58,237,.08);
+    position: absolute;
+    top: .75rem;
+    right: 1rem;
+}
+.how-step-icon {
+    width: 52px; height: 52px;
+    background: color-mix(in srgb, var(--c) 12%, transparent);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: var(--c);
+}
+.min-w-0 { min-width: 0; }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<!-- Hero -->
+<!-- ─── HERO ─────────────────────────────────── -->
 <section class="hero-section">
-    <div class="container">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="container position-relative" style="z-index:2;">
         <div class="row align-items-center g-5">
+            <!-- Left copy -->
             <div class="col-lg-6" data-aos="fade-right">
                 <div class="hero-badge">
-                    <i class="fas fa-star"></i> Nepal's First Creator Marketplace
+                    <span class="dot"></span>Nepal's First Creator Marketplace
                 </div>
                 <h1 class="hero-title">
-                    Connect Brands with <span class="gradient-text">Authentic Creators</span>
+                    Where Brands Meet<br><span class="gradient-text">Authentic Creators</span>
                 </h1>
                 <p class="hero-subtitle">
-                    INFUX is Nepal's trusted platform connecting brands with influencers across Instagram, TikTok, YouTube, and Facebook.
+                    INFUX connects Nepal's brands with verified influencers across Instagram, TikTok, YouTube & Facebook — one platform, zero guesswork.
                 </p>
-                <div class="hero-cta-group">
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-violet rounded-pill px-4 py-2">
+                <div class="hero-cta-group mb-5">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-violet px-5 py-2">
                         <i class="fas fa-rocket me-2"></i>Get Started Free
                     </a>
-                    <a href="{{ url_for('public.discover') }}" class="btn btn-outline-light rounded-pill px-4 py-2">
+                    <a href="{{ url_for('public.discover') }}"
+                       class="btn btn-outline-light rounded-pill px-4 py-2" style="font-weight:700;font-size:.87rem;">
                         <i class="fas fa-search me-2"></i>Discover Creators
                     </a>
                 </div>
-                <div class="d-flex gap-4 mt-4">
+                <!-- Stats row -->
+                <div class="d-flex gap-4 flex-wrap" style="border-top:1px solid rgba(255,255,255,.08);padding-top:1.75rem;">
+                    {% for num, label in [(stats.influencers, 'Creators'), (stats.brands, 'Brands'), (stats.campaigns, 'Campaigns'), (stats.niches, 'Niches')] %}
                     <div class="hero-stat">
-                        <span class="hero-stat-num" data-target="{{ stats.influencers }}">0</span>
-                        <span class="hero-stat-label">Creators</span>
+                        <span class="hero-stat-num" data-target="{{ num }}">0</span>
+                        <span class="hero-stat-label">{{ label }}</span>
                     </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-num" data-target="{{ stats.brands }}">0</span>
-                        <span class="hero-stat-label">Brands</span>
-                    </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-num" data-target="{{ stats.campaigns }}">0</span>
-                        <span class="hero-stat-label">Campaigns</span>
-                    </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-num" data-target="{{ stats.niches }}">0</span>
-                        <span class="hero-stat-label">Niches</span>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
-            <div class="col-lg-6 d-none d-lg-flex justify-content-center" data-aos="fade-left">
-                <div style="width:420px;height:380px;background:rgba(124,58,237,.15);border-radius:24px;border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;">
-                    <div class="text-center text-white">
-                        <i class="fas fa-users fa-4x mb-3" style="opacity:.4;"></i>
-                        <p style="opacity:.4;font-size:.9rem;">Creator Ecosystem</p>
+
+            <!-- Right — floating creator cards mosaic -->
+            <div class="col-lg-6 d-none d-lg-block" data-aos="fade-left" data-aos-delay="100">
+                <div class="hero-mosaic">
+                    {% for inf in top_influencers[:4] %}
+                    <div class="hero-creator-card" style="animation-delay:{{ loop.index0 * 0.3 }}s">
+                        <img src="{{ inf.user.avatar_url() }}"
+                             onerror="this.src='https://ui-avatars.com/api/?name={{ inf.user.first_name }}&background=7c3aed&color=fff&size=48'"
+                             alt="{{ inf.user.full_name() }}">
+                        <div>
+                            <div class="hero-cc-name">{{ inf.user.full_name() }}</div>
+                            <div class="hero-cc-niche">{{ inf.niche or 'Creator' }}</div>
+                        </div>
+                        <span class="inf-score ms-auto">{{ inf.creator_score }}</span>
+                    </div>
+                    {% endfor %}
+                    <div class="hero-mosaic-badge">
+                        <i class="fas fa-shield-alt me-1"></i>Verified Creators
                     </div>
                 </div>
             </div>
@@ -55,28 +157,28 @@
     </div>
 </section>
 
-<!-- How It Works -->
-<section class="py-6" style="padding:5rem 0;background:var(--gray-lt);">
-    <div class="container">
+<!-- ─── HOW IT WORKS ──────────────────────────── -->
+<section class="py-5 section-bg">
+    <div class="container" style="padding:4rem 0;">
         <div class="text-center mb-5" data-aos="fade-up">
             <div class="section-label mb-3">Simple Process</div>
             <h2 class="section-title">How <span class="gradient-text">INFUX</span> Works</h2>
         </div>
         <div class="row g-4">
             {% for icon, title, desc, color in [
-                ('user-plus',     'Create Profile',    'Register as a brand or creator and build your professional profile', '#7c3aed'),
-                ('bullhorn',      'Post or Discover',  'Brands post campaigns. Creators discover and apply to opportunities.', '#f59e0b'),
-                ('handshake',     'Connect & Collab',  'Match, negotiate, and start your collaboration through the platform.', '#16a34a'),
-                ('chart-line',    'Track & Grow',      'Monitor campaign performance and build your reputation score.', '#0ea5e9')
+                ('user-plus',  'Create Profile',   'Register as a brand or creator and build your professional profile.', '#7c3aed'),
+                ('bullhorn',   'Post or Discover', 'Brands post campaigns. Creators discover and apply to opportunities.', '#f59e0b'),
+                ('handshake',  'Connect & Collab', 'Match, negotiate, and collaborate through the platform.', '#10b981'),
+                ('chart-line', 'Track & Grow',     'Monitor performance, collect reviews, and build your reputation score.', '#0ea5e9')
             ] %}
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 80 }}">
-                <div class="text-center p-3">
-                    <div style="width:64px;height:64px;background:{{ color }}18;border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
-                        <i class="fas fa-{{ icon }}" style="color:{{ color }};font-size:1.5rem;"></i>
+                <div class="how-step h-100">
+                    <div class="how-step-num">0{{ loop.index }}</div>
+                    <div class="how-step-icon" style="--c:{{ color }};">
+                        <i class="fas fa-{{ icon }}"></i>
                     </div>
-                    <div style="width:28px;height:3px;background:{{ color }};border-radius:2px;margin:0 auto .75rem;"></div>
-                    <h6 class="fw-bold mb-2">{{ title }}</h6>
-                    <p class="text-muted small mb-0">{{ desc }}</p>
+                    <h6 class="fw-bold mb-2 mt-3" style="font-family:'Syne',sans-serif;letter-spacing:-.2px;">{{ title }}</h6>
+                    <p class="text-muted small mb-0" style="line-height:1.7;">{{ desc }}</p>
                 </div>
             </div>
             {% endfor %}
@@ -84,7 +186,7 @@
     </div>
 </section>
 
-<!-- Top Creators -->
+<!-- ─── TOP CREATORS ─────────────────────────── -->
 <section style="padding:5rem 0;">
     <div class="container">
         <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3" data-aos="fade-up">
@@ -93,35 +195,41 @@
                 <h2 class="section-title">Top <span class="gradient-text">Creators</span></h2>
             </div>
             <a href="{{ url_for('public.discover') }}" class="btn btn-outline-violet rounded-pill px-4">
-                View All <i class="fas fa-arrow-right ms-1"></i>
+                View All <i class="fas fa-arrow-right ms-2"></i>
             </a>
         </div>
         <div class="row g-3">
             {% for inf in top_influencers %}
-            <div class="col-sm-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 % 4 * 60 }}">
-                <a href="{{ url_for('public.influencer_profile', influencer_id=inf.influencer_id) }}" class="text-decoration-none">
+            <div class="col-sm-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 % 4 * 55 }}">
+                <a href="{{ url_for('public.influencer_profile', user_id=inf.user_id) }}" class="text-decoration-none">
                     <div class="influencer-card h-100">
                         <div class="d-flex align-items-center gap-3 mb-3">
-                            <img src="{{ url_for('static', filename='uploads/' + inf.user.profile_picture) }}"
+                            <img src="{{ inf.user.avatar_url() }}"
                                  class="inf-avatar"
                                  onerror="this.src='https://ui-avatars.com/api/?name={{ inf.user.first_name }}&background=7c3aed&color=fff&size=64'"
                                  alt="{{ inf.user.full_name() }}">
-                            <div>
-                                <div class="fw-bold small">{{ inf.user.full_name() }}</div>
-                                <div class="niche-badge mt-1">{{ inf.niche or 'Creator' }}</div>
+                            <div class="min-w-0">
+                                <div class="fw-bold small text-truncate" style="color:#1e1b4b;">{{ inf.user.full_name() }}</div>
+                                <span class="niche-badge d-inline-block mt-1">{{ inf.niche or 'Creator' }}</span>
                             </div>
                         </div>
+                        <!-- Platform stats -->
                         <div class="d-flex flex-wrap gap-2 mb-3">
                             {% if inf.instagram_followers %}
-                            <div class="platform-stat"><i class="fab fa-instagram text-danger"></i> {{ (inf.instagram_followers / 1000)|round(1) }}K</div>
+                            <div class="platform-stat"><i class="fab fa-instagram" style="color:#e1306c;"></i> {{ '{:,.0f}'.format(inf.instagram_followers) if inf.instagram_followers < 10000 else (inf.instagram_followers / 1000)|round(1)|string + 'K' }}</div>
                             {% endif %}
                             {% if inf.tiktok_followers %}
                             <div class="platform-stat"><i class="fab fa-tiktok"></i> {{ (inf.tiktok_followers / 1000)|round(1) }}K</div>
                             {% endif %}
+                            {% if inf.youtube_subscribers %}
+                            <div class="platform-stat"><i class="fab fa-youtube" style="color:#ff0000;"></i> {{ (inf.youtube_subscribers / 1000)|round(1) }}K</div>
+                            {% endif %}
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted small"><i class="fas fa-fire me-1 text-warning"></i>{{ inf.engagement_rate }}% eng.</span>
-                            <span class="inf-score">{{ inf.creator_score }} score</span>
+                            <span class="text-muted" style="font-size:.78rem;">
+                                <i class="fas fa-fire me-1" style="color:var(--gold);"></i>{{ inf.engagement_rate }}% eng.
+                            </span>
+                            <span class="inf-score">{{ inf.creator_score }} pts</span>
                         </div>
                     </div>
                 </a>
@@ -131,8 +239,8 @@
     </div>
 </section>
 
-<!-- Featured Campaigns -->
-<section style="padding:5rem 0;background:var(--gray-lt);">
+<!-- ─── FEATURED CAMPAIGNS ───────────────────── -->
+<section class="section-bg" style="padding:5rem 0;">
     <div class="container">
         <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3" data-aos="fade-up">
             <div>
@@ -140,34 +248,38 @@
                 <h2 class="section-title">Latest <span class="gradient-text">Campaigns</span></h2>
             </div>
             <a href="{{ url_for('public.campaigns') }}" class="btn btn-outline-violet rounded-pill px-4">
-                All Campaigns <i class="fas fa-arrow-right ms-1"></i>
+                All Campaigns <i class="fas fa-arrow-right ms-2"></i>
             </a>
         </div>
         <div class="row g-3">
             {% for c in featured_campaigns %}
             <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index0 % 3 * 60 }}">
-                <div class="campaign-card h-100">
+                <div class="campaign-card h-100 d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
-                            <h6 class="fw-bold mb-1">{{ c.title }}</h6>
-                            <span class="text-muted small">{{ c.brand.company_name }}</span>
+                            <h6 class="fw-bold mb-1" style="color:#1e1b4b;font-family:'Syne',sans-serif;letter-spacing:-.2px;">{{ c.title }}</h6>
+                            <div class="text-muted small d-flex align-items-center gap-1">
+                                <i class="fas fa-building" style="font-size:.7rem;"></i>{{ c.brand.company_name }}
+                            </div>
                         </div>
-                        <span class="badge rounded-pill px-3 py-2 status-open">Open</span>
+                        <span class="badge rounded-pill px-3 py-1 status-open" style="font-size:.72rem;">Open</span>
                     </div>
                     <div class="campaign-budget mb-3">Rs. {{ '{:,.0f}'.format(c.budget) }}</div>
                     <div class="d-flex flex-wrap gap-2 mb-3">
                         {% if c.platform %}
-                        <span class="niche-badge"><i class="fab fa-{{ c.platform | lower }} me-1"></i>{{ c.platform | title }}</span>
+                        <span class="niche-badge"><i class="fab fa-{{ c.platform|lower }} me-1"></i>{{ c.platform|title }}</span>
                         {% endif %}
                         {% if c.niche %}
                         <span class="niche-badge" style="background:#fef3c7;color:#92400e;">{{ c.niche }}</span>
                         {% endif %}
                     </div>
-                    <p class="text-muted small mb-0" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                        {{ c.description or 'No description.' }}
+                    <p class="text-muted small mb-0 mt-auto" style="line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                        {{ c.description or 'Looking for authentic creators to promote this campaign.' }}
                     </p>
                     {% if c.deadline %}
-                    <p class="text-muted small mt-2 mb-0"><i class="fas fa-calendar me-1 text-violet"></i>Deadline: {{ c.deadline.strftime('%b %d, %Y') }}</p>
+                    <div class="text-muted small mt-3" style="font-size:.78rem;">
+                        <i class="far fa-calendar-alt me-1" style="color:var(--violet);"></i>Deadline: {{ c.deadline.strftime('%b %d, %Y') }}
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -176,19 +288,25 @@
     </div>
 </section>
 
-<!-- CTA -->
-<section style="padding:5rem 0;background:linear-gradient(135deg,var(--navy) 0%,#2d1b69 100%);">
-    <div class="container text-center" data-aos="fade-up">
-        <div class="section-label mb-3" style="background:rgba(124,58,237,.3);color:#c4b5fd;">Start Today</div>
-        <h2 class="section-title mb-3" style="color:#fff;">Ready to Grow in <span class="gradient-text">Nepal's Creator Economy?</span></h2>
-        <p style="color:rgba(255,255,255,.6);max-width:500px;margin:0 auto 2rem;">
-            Join thousands of creators and brands already collaborating on INFUX.
+<!-- ─── CTA ──────────────────────────────────── -->
+<section class="section-dark" style="padding:6rem 0;position:relative;overflow:hidden;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 20% 50%,rgba(124,58,237,.2) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 80% 30%,rgba(245,158,11,.1) 0%,transparent 50%);"></div>
+    <div class="container text-center position-relative" style="z-index:2;" data-aos="fade-up">
+        <div class="hero-badge d-inline-flex mb-4">
+            <span class="dot"></span>Start Today — It's Free
+        </div>
+        <h2 style="font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:1rem;">
+            Ready to Grow in<br><span style="background:linear-gradient(135deg,#a78bfa,var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Nepal's Creator Economy?</span>
+        </h2>
+        <p style="color:rgba(255,255,255,.5);max-width:480px;margin:0 auto 2.5rem;line-height:1.7;">
+            Join hundreds of creators and brands already building real collaborations on INFUX.
         </p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
-            <a href="{{ url_for('auth.register') }}" class="btn btn-gold rounded-pill px-5 py-2">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-gold px-5 py-2">
                 <i class="fas fa-user-plus me-2"></i>Join as Creator
             </a>
-            <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light rounded-pill px-5 py-2">
+            <a href="{{ url_for('auth.register') }}"
+               class="btn btn-outline-light rounded-pill px-5 py-2" style="font-weight:700;font-size:.87rem;">
                 <i class="fas fa-building me-2"></i>I'm a Brand
             </a>
         </div>

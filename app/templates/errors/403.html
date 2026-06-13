@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}403 — Forbidden | INFUX{% endblock %}
+{% block content %}
+<section style="min-height:60vh;display:flex;align-items:center;justify-content:center;">
+  <div class="text-center" data-aos="fade-up">
+    <div style="font-family:'Syne',sans-serif;font-size:8rem;font-weight:800;line-height:1;
+                background:linear-gradient(135deg,#f59e0b,#7c3aed);
+                -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">403</div>
+    <h2 class="fw-bold mb-3" style="font-family:'Syne',sans-serif;">Access Denied</h2>
+    <p class="text-muted mb-4">You don't have permission to access this page.</p>
+    <a href="{{ url_for('public.home') }}" class="btn btn-violet px-5 py-2">
+      <i class="fas fa-home me-2"></i>Back to Home
+    </a>
+  </div>
+</section>
+{% endblock %}

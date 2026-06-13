@@ -15,3 +15,7 @@ class Application(db.Model):
     __table_args__ = (
         db.UniqueConstraint('campaign_id', 'influencer_id', name='unique_application'),
     )
+
+    @property
+    def created_at(self):
+        return self.applied_at

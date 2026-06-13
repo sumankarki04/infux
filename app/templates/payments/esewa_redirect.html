@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Redirecting to eSewa…{% endblock %}
+{% block content %}
+<div class="container text-center py-5">
+    <div class="my-5">
+        <div style="width:64px;height:64px;background:#60BB46;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+            <i class="fas fa-spinner fa-spin text-white fa-lg"></i>
+        </div>
+        <h4 class="fw-bold mb-2" style="font-family:'Syne',sans-serif;">Redirecting to eSewa…</h4>
+        <p class="text-muted small">Do not close this window.</p>
+    </div>
+    <form id="esewaForm" method="POST" action="{{ esewa_url }}">
+        {% for key, val in fields.items() %}
+        <input type="hidden" name="{{ key }}" value="{{ val }}">
+        {% endfor %}
+    </form>
+</div>
+<script>document.addEventListener('DOMContentLoaded', () => document.getElementById('esewaForm').submit());</script>
+{% endblock %}

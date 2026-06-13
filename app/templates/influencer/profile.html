@@ -67,6 +67,31 @@
                             <label class="form-label">TikTok Followers</label>
                             <input type="number" name="tiktok_followers" class="form-control" value="{{ inf.tiktok_followers or 0 }}" min="0">
                         </div>
+                        <!-- Social API verify buttons -->
+                        <div class="col-12">
+                            <div class="d-flex gap-2 flex-wrap p-3 rounded-3" style="background:#f8f7ff;border:1px dashed #ede9fe;">
+                                <div class="text-muted small me-auto" style="align-self:center;">
+                                    <i class="fas fa-bolt me-1" style="color:var(--violet);"></i>
+                                    Auto-verify follower counts from your social profiles
+                                </div>
+                                <form method="POST" action="{{ url_for('influencer.verify_social') }}" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="platform" value="instagram">
+                                    <button type="submit" class="btn btn-sm rounded-pill px-3"
+                                            style="background:linear-gradient(135deg,#e1306c,#833ab4);color:#fff;border:none;">
+                                        <i class="fab fa-instagram me-1"></i>Verify Instagram
+                                    </button>
+                                </form>
+                                <form method="POST" action="{{ url_for('influencer.verify_social') }}" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="platform" value="tiktok">
+                                    <button type="submit" class="btn btn-sm rounded-pill px-3"
+                                            style="background:#000;color:#fff;border:none;">
+                                        <i class="fab fa-tiktok me-1"></i>Verify TikTok
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label"><i class="fab fa-youtube me-1 text-danger"></i>YouTube Handle</label>
                             <input type="text" name="youtube_handle" class="form-control" value="{{ inf.youtube_handle or '' }}" placeholder="@channel">

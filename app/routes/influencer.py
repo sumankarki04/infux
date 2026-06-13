@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from app import db
 from app.models.campaign import Campaign
@@ -123,3 +123,43 @@ def my_applications():
     applications = Application.query.filter_by(influencer_id=inf.influencer_id)\
                        .order_by(Application.applied_at.desc()).all()
     return render_template('influencer/applications.html', applications=applications)
+
+
+@influencer_bp.route('/verify-social', methods=['POST'])
+@login_required
+@require_influencer
+def verify_social():
+    """Trigger live follower count verification from Instagram or TikTok."""
+    from app.services.social import verify_instagram, verify_tiktok
+    platform = request.form.get('platform', '').lower()
+    inf      = current_user.influencer
+
+    if platform == 'instagram':
+        username = inf.instagram_handle or ''
+        if not username:
+            flash('Add your Instagram username in your profile first.', 'warning')
+            return redirect(url_for('influencer.profile'))
+        result = verify_instagram(username)
+        if result['verified']:
+            inf.instagram_followers = result['followers']
+            db.session.commit()
+            flash(f"Instagram verified: {result['followers']:,} followers.", 'success')
+        else:
+            flash(f"Instagram verification failed: {result['error']}", 'warning')
+
+    elif platform == 'tiktok':
+        username = inf.tiktok_handle or ''
+        if not username:
+            flash('Add your TikTok username in your profile first.', 'warning')
+            return redirect(url_for('influencer.profile'))
+        result = verify_tiktok(username)
+        if result['verified']:
+            inf.tiktok_followers = result['followers']
+            db.session.commit()
+            flash(f"TikTok verified: {result['followers']:,} followers.", 'success')
+        else:
+            flash(f"TikTok verification failed: {result['error']}", 'warning')
+    else:
+        flash('Unknown platform.', 'danger')
+
+    return redirect(url_for('influencer.profile'))

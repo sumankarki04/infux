@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
@@ -40,6 +40,7 @@ def create_app():
     from app.routes.brand import brand_bp
     from app.routes.admin import admin_bp
     from app.routes.chat import chat_bp
+    from app.routes.payments import payments_bp
 
     app.register_blueprint(public_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -47,12 +48,34 @@ def create_app():
     app.register_blueprint(brand_bp, url_prefix='/brand')
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(chat_bp, url_prefix='/chat')
+    app.register_blueprint(payments_bp, url_prefix='/pay')
 
     csrf.exempt(chat_bp)
 
     with app.app_context():
+        from app.models import payment  # noqa: ensure Payment table created
         db.create_all()
         from app.utils.seed import seed_data
         seed_data()
+
+    @app.after_request
+    def security_headers(response):
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        return response
+
+    @app.errorhandler(404)
+    def not_found(e):
+        return render_template('errors/404.html'), 404
+
+    @app.errorhandler(500)
+    def server_error(e):
+        return render_template('errors/500.html'), 500
+
+    @app.errorhandler(403)
+    def forbidden(e):
+        return render_template('errors/403.html'), 403
 
     return app
