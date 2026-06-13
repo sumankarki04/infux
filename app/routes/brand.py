@@ -156,11 +156,26 @@ def handle_application(application_id, action):
     if app.campaign.brand_id != current_user.brand.brand_id:
         flash('Not authorised.', 'danger')
         return redirect(url_for('brand.dashboard'))
+    from app.utils.notifications import notify
     if action == 'accept':
         app.status = 'accepted'
+        notify(
+            user_id=app.influencer.user_id,
+            title='Application accepted!',
+            notif_type='accepted',
+            body=f'"{app.campaign.title}" — {current_user.brand.company_name} accepted your application.',
+            link='/influencer/applications'
+        )
         flash('Application accepted!', 'success')
     elif action == 'reject':
         app.status = 'rejected'
+        notify(
+            user_id=app.influencer.user_id,
+            title='Application update',
+            notif_type='rejected',
+            body=f'"{app.campaign.title}" — your application was not selected this time.',
+            link='/influencer/applications'
+        )
         flash('Application rejected.', 'info')
     db.session.commit()
     return redirect(url_for('brand.campaign_detail', campaign_id=app.campaign_id))

@@ -17,6 +17,10 @@
 <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
+<style>
+.notif-item:hover { background: #f8f7ff !important; }
+.notif-unread { background: #faf5ff; }
+</style>
 {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -39,6 +43,74 @@
                 <a href="{{ url_for('chat.inbox') }}" class="btn btn-sm btn-outline-light rounded-pill me-1">
                     <i class="fas fa-comment-dots me-1"></i>Messages
                 </a>
+
+                <!-- Notification bell -->
+                <div class="dropdown me-1">
+                    <button class="btn btn-sm btn-outline-light rounded-pill position-relative"
+                            type="button" data-bs-toggle="dropdown" id="notifBell"
+                            aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                        {% if unread_notif_count %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                              style="background:#ef4444;font-size:.6rem;padding:2px 5px;min-width:16px;"
+                              id="notifBadge">{{ unread_notif_count if unread_notif_count < 99 else '99+' }}</span>
+                        {% else %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill d-none"
+                              style="background:#ef4444;font-size:.6rem;padding:2px 5px;min-width:16px;"
+                              id="notifBadge"></span>
+                        {% endif %}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end border-0 shadow rounded-4 p-0 overflow-hidden"
+                         style="width:320px;max-height:420px;">
+                        <div class="d-flex justify-content-between align-items-center px-3 py-2"
+                             style="background:#f8f7ff;border-bottom:1px solid #ede9fe;">
+                            <span class="fw-bold small" style="font-family:'Syne',sans-serif;color:var(--navy);">
+                                Notifications
+                            </span>
+                            {% if unread_notif_count %}
+                            <a href="{{ url_for('notifications.index') }}" class="text-muted" style="font-size:.72rem;">
+                                Mark all read
+                            </a>
+                            {% endif %}
+                        </div>
+                        <div style="overflow-y:auto;max-height:340px;">
+                            {% if recent_notifications %}
+                            {% for n in recent_notifications %}
+                            <a href="{{ n.link or url_for('notifications.index') }}"
+                               class="d-flex align-items-start gap-3 px-3 py-2 text-decoration-none notif-item{% if not n.is_read %} notif-unread{% endif %}"
+                               style="border-bottom:1px solid #f1f5f9;transition:background .15s;"
+                               data-notif-id="{{ n.notification_id }}">
+                                <div class="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center mt-1"
+                                     style="width:32px;height:32px;background:{{ n.color }}18;">
+                                    <i class="fas {{ n.icon }}" style="color:{{ n.color }};font-size:.75rem;"></i>
+                                </div>
+                                <div class="flex-grow-1 min-width-0">
+                                    <div class="small fw-semibold text-truncate" style="color:var(--navy);">{{ n.title }}</div>
+                                    {% if n.body %}
+                                    <div class="text-muted" style="font-size:.72rem;line-height:1.4;">{{ n.body|truncate(70, True, '…') }}</div>
+                                    {% endif %}
+                                    <div class="text-muted" style="font-size:.65rem;">{{ n.created_at.strftime('%b %d, %H:%M') }}</div>
+                                </div>
+                                {% if not n.is_read %}
+                                <div class="flex-shrink-0 rounded-circle mt-2"
+                                     style="width:7px;height:7px;background:#7c3aed;"></div>
+                                {% endif %}
+                            </a>
+                            {% endfor %}
+                            {% else %}
+                            <div class="text-center text-muted py-4" style="font-size:.82rem;">
+                                <i class="fas fa-bell-slash mb-2 d-block" style="font-size:1.4rem;color:#ddd;"></i>
+                                No notifications yet
+                            </div>
+                            {% endif %}
+                        </div>
+                        <a href="{{ url_for('notifications.index') }}"
+                           class="d-block text-center py-2 text-decoration-none small fw-semibold"
+                           style="background:#f8f7ff;color:var(--violet);border-top:1px solid #ede9fe;font-size:.78rem;">
+                            View all notifications
+                        </a>
+                    </div>
+                </div>
                 <div class="dropdown">
                     <button class="btn btn-sm btn-outline-light rounded-pill dropdown-toggle d-flex align-items-center gap-2"
                             type="button" data-bs-toggle="dropdown">

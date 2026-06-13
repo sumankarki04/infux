@@ -111,6 +111,14 @@ def apply(campaign_id):
                       influencer_id=inf.influencer_id,
                       message=message)
     db.session.add(app)
+    from app.utils.notifications import notify
+    notify(
+        user_id=campaign.brand.user_id,
+        title=f'New application for "{campaign.title}"',
+        notif_type='application',
+        body=f'{current_user.full_name()} applied to your campaign.',
+        link=f'/brand/campaigns/{campaign_id}'
+    )
     db.session.commit()
     flash('Application submitted!', 'success')
     return redirect(url_for('influencer.my_applications'))

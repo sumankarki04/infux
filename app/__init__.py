@@ -42,6 +42,7 @@ def create_app():
     from app.routes.chat import chat_bp
     from app.routes.payments import payments_bp
     from app.routes.reviews import reviews_bp
+    from app.routes.notifications import notifications_bp
 
     app.register_blueprint(public_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -51,11 +52,26 @@ def create_app():
     app.register_blueprint(chat_bp, url_prefix='/chat')
     app.register_blueprint(payments_bp, url_prefix='/pay')
     app.register_blueprint(reviews_bp, url_prefix='/reviews')
+    app.register_blueprint(notifications_bp, url_prefix='/notifications')
 
     csrf.exempt(chat_bp)  # send uses JSON + X-CSRFToken header; GET poll needs no CSRF
 
+    @app.context_processor
+    def inject_notifications():
+        from flask_login import current_user
+        if current_user.is_authenticated:
+            from app.models.notification import Notification
+            count = Notification.query.filter_by(
+                user_id=current_user.user_id, is_read=False).count()
+            recent = Notification.query.filter_by(
+                user_id=current_user.user_id
+            ).order_by(Notification.created_at.desc()).limit(5).all()
+            return {'unread_notif_count': count, 'recent_notifications': recent}
+        return {'unread_notif_count': 0, 'recent_notifications': []}
+
     with app.app_context():
         from app.models import payment  # noqa: ensure Payment table created
+        from app.models import notification as _notif_model  # noqa
         db.create_all()
         from app.utils.seed import seed_data
         seed_data()

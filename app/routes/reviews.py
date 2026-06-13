@@ -110,9 +110,19 @@ def submit():
     )
     db.session.add(review)
 
-    # Update influencer rating stats if reviewee is an influencer
+    # Notify the reviewee
     from app.models.user import User
+    from app.utils.notifications import notify
     reviewee_user = db.session.get(User, reviewee_id)
+    notify(
+        user_id=reviewee_id,
+        title='You received a new review',
+        notif_type='review',
+        body=f'{current_user.full_name()} left you a {rating}-star review.',
+        link=f'/influencer/{reviewee_id}' if reviewee_user and reviewee_user.user_type == 'influencer' else '/brand/dashboard'
+    )
+
+    # Update influencer rating stats if reviewee is an influencer
     if reviewee_user and reviewee_user.user_type == 'influencer' and reviewee_user.influencer:
         db.session.flush()  # ensure the new review is visible to the query
         reviewee_user.influencer.update_rating_stats()
