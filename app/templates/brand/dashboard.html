@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Brand Dashboard - INFUX{% endblock %}
+{% block content %}
+<div class="container py-4">
+
+    <div class="page-hero d-flex justify-content-between align-items-center flex-wrap gap-3" data-aos="fade-up">
+        <div>
+            <h2 class="mb-1">Welcome, {{ br.company_name }}! 🚀</h2>
+            <p>Manage your campaigns and find the right creators</p>
+        </div>
+        <a href="{{ url_for('brand.create_campaign') }}" class="btn btn-gold rounded-pill px-4">
+            <i class="fas fa-plus me-2"></i>New Campaign
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        {% for icon, label, val, color in [
+            ('bullhorn',       'Total Campaigns',     br.campaigns|length,                  '#7c3aed'),
+            ('paper-plane',    'Total Applications',  total_applications,                   '#f59e0b'),
+            ('check-circle',   'Active Campaigns',    br.campaigns|selectattr('status','eq','open')|list|length, '#16a34a'),
+            ('users',          'Creators Discovered', (br.campaigns|length * 3),            '#0ea5e9'),
+        ] %}
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
+            <div class="dash-stat text-center">
+                <div class="dash-stat-icon mx-auto mb-2" style="background:{{ color }}18;">
+                    <i class="fas fa-{{ icon }}" style="color:{{ color }};font-size:1.2rem;"></i>
+                </div>
+                <div class="dash-stat-num">{{ val }}</div>
+                <p class="text-muted small mb-0">{{ label }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent campaigns -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4" data-aos="fade-up">
+                <div class="d-flex justify-content-between align-items-center p-4 pb-2">
+                    <h6 class="fw-bold mb-0"><i class="fas fa-bullhorn me-2 text-violet"></i>Recent Campaigns</h6>
+                    <a href="{{ url_for('brand.my_campaigns') }}" class="btn btn-sm btn-outline-violet rounded-pill">View All</a>
+                </div>
+                <div class="card-body px-4 pt-2">
+                    {% if campaigns %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Campaign</th><th>Budget</th><th>Apps</th><th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in campaigns %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('brand.campaign_detail', campaign_id=c.campaign_id) }}"
+                                           class="fw-semibold text-decoration-none" style="color:var(--navy);">{{ c.title }}</a>
+                                    </td>
+                                    <td class="fw-semibold" style="color:var(--green);">Rs. {{ '{:,.0f}'.format(c.budget) }}</td>
+                                    <td class="text-muted small">{{ c.applications|length }}</td>
+                                    <td><span class="badge rounded-pill px-3 py-2 status-{{ c.status }}">{{ c.status|title }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-bullhorn fa-2x text-muted mb-2"></i>
+                        <p class="text-muted small">No campaigns yet. <a href="{{ url_for('brand.create_campaign') }}" style="color:var(--violet);">Create your first →</a></p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick links -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4" data-aos="fade-up" data-aos-delay="100">
+                <h6 class="fw-bold mb-3"><i class="fas fa-bolt me-2" style="color:var(--gold);"></i>Quick Actions</h6>
+                <div class="d-flex flex-column gap-2">
+                    <a href="{{ url_for('brand.create_campaign') }}" class="btn btn-gold rounded-pill text-start px-3">
+                        <i class="fas fa-plus me-2"></i>Create Campaign
+                    </a>
+                    <a href="{{ url_for('public.discover') }}" class="btn btn-outline-secondary btn-sm rounded-pill text-start px-3">
+                        <i class="fas fa-search me-2 text-violet"></i>Discover Creators
+                    </a>
+                    <a href="{{ url_for('brand.profile') }}" class="btn btn-outline-secondary btn-sm rounded-pill text-start px-3">
+                        <i class="fas fa-building me-2 text-violet"></i>Edit Brand Profile
+                    </a>
+                    <a href="{{ url_for('chat.inbox') }}" class="btn btn-outline-secondary btn-sm rounded-pill text-start px-3">
+                        <i class="fas fa-comment me-2 text-violet"></i>Messages
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

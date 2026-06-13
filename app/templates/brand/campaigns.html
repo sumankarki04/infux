@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}My Campaigns - INFUX{% endblock %}
+{% block content %}
+
+<div class="inner-banner">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item"><a href="{{ url_for('brand.dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Campaigns</li>
+            </ol>
+        </nav>
+        <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+            <div>
+                <div class="section-label mb-2">Manage</div>
+                <h1 class="mb-0" style="font-size:clamp(1.4rem,3vw,1.9rem);">My <span style="background:linear-gradient(135deg,var(--violet),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Campaigns</span></h1>
+            </div>
+            <a href="{{ url_for('brand.create_campaign') }}" class="btn btn-gold rounded-pill px-4">
+                <i class="fas fa-plus me-2"></i>New Campaign
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap gap-2 mb-4" data-aos="fade-up">
+        {% for s in ['all','open','closed','completed'] %}
+        <a href="?status={{ s }}"
+           class="btn btn-sm rounded-pill {% if status == s %}btn-violet{% else %}btn-outline-secondary{% endif %} px-3">
+            {{ s | title }}
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if campaigns %}
+    <div class="row g-3">
+        {% for c in campaigns %}
+        <div class="col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index0 % 2 * 60 }}">
+            <div class="campaign-card h-100">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h6 class="fw-bold mb-1">
+                            <a href="{{ url_for('brand.campaign_detail', campaign_id=c.campaign_id) }}"
+                               class="text-decoration-none" style="color:var(--navy);">{{ c.title }}</a>
+                        </h6>
+                        <span class="text-muted small">Created {{ c.created_at.strftime('%b %d, %Y') }}</span>
+                    </div>
+                    <span class="badge rounded-pill px-3 py-2 status-{{ c.status }}">{{ c.status|title }}</span>
+                </div>
+                <div class="campaign-budget mb-3">Rs. {{ '{:,.0f}'.format(c.budget) }}</div>
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    {% if c.platform %}<span class="niche-badge"><i class="fab fa-{{ c.platform|lower }} me-1"></i>{{ c.platform|title }}</span>{% endif %}
+                    {% if c.niche %}<span class="niche-badge" style="background:#fef3c7;color:#92400e;">{{ c.niche }}</span>{% endif %}
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small"><i class="fas fa-users me-1" style="color:var(--violet);"></i>{{ c.applications|length }} applications</span>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('brand.campaign_detail', campaign_id=c.campaign_id) }}"
+                           class="btn btn-sm btn-outline-violet rounded-pill px-3">View</a>
+                        {% if c.status == 'open' %}
+                        <form method="POST" action="{{ url_for('brand.close_campaign', campaign_id=c.campaign_id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                                    data-confirm="Close this campaign?">Close</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="fas fa-bullhorn"></i></div>
+        <h5 class="fw-bold mb-2">No campaigns yet</h5>
+        <p class="text-muted mb-4">Create your first campaign to start finding creators.</p>
+        <a href="{{ url_for('brand.create_campaign') }}" class="btn btn-gold rounded-pill px-5">
+            <i class="fas fa-plus me-2"></i>Create Campaign
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

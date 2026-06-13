@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Create Campaign - INFUX{% endblock %}
+{% block content %}
+
+<div class="inner-banner">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item"><a href="{{ url_for('brand.my_campaigns') }}">Campaigns</a></li>
+                <li class="breadcrumb-item active">Create New</li>
+            </ol>
+        </nav>
+        <div class="section-label mb-2">Launch</div>
+        <h1 class="mb-1" style="font-size:clamp(1.4rem,3vw,1.9rem);">Create <span style="background:linear-gradient(135deg,var(--violet),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Campaign</span></h1>
+    </div>
+</div>
+
+<div class="container py-4" style="max-width:800px;">
+    <div class="card border-0 shadow-sm rounded-4 p-4" data-aos="fade-up">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Campaign Title <span class="text-danger">*</span></label>
+                    <input type="text" name="title" class="form-control" required placeholder="e.g. Tech Product Launch Q3 2025">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="4"
+                              placeholder="What are you promoting? What kind of content do you need?"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Platform</label>
+                    <select name="platform" class="form-select">
+                        <option value="">Any Platform</option>
+                        {% for p in platforms %}<option value="{{ p|lower }}">{{ p }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Niche / Category</label>
+                    <select name="niche" class="form-select">
+                        <option value="">Any Niche</option>
+                        {% for n in niches %}<option value="{{ n }}">{{ n }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Budget (Rs) <span class="text-danger">*</span></label>
+                    <input type="number" name="budget" class="form-control" required min="0" placeholder="e.g. 25000">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Deadline</label>
+                    <input type="date" name="deadline" class="form-control">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Deliverables</label>
+                    <textarea name="deliverables" class="form-control" rows="2"
+                              placeholder="e.g. 3 Instagram posts, 2 Stories, 1 TikTok video"></textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Min Followers</label>
+                    <input type="number" name="min_followers" class="form-control" min="0" placeholder="e.g. 10000">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Max Followers</label>
+                    <input type="number" name="max_followers" class="form-control" min="0" placeholder="e.g. 500000">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="location" class="form-control" value="Nepal" placeholder="Nepal">
+                </div>
+                <div class="col-12 d-flex gap-3">
+                    <button type="submit" class="btn btn-gold rounded-pill px-5 py-2">
+                        <i class="fas fa-rocket me-2"></i>Launch Campaign
+                    </button>
+                    <a href="{{ url_for('brand.my_campaigns') }}" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Manage Campaigns - INFUX{% endblock %}
+{% block content %}
+
+<div class="inner-banner">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Campaigns</li>
+            </ol>
+        </nav>
+        <div class="section-label mb-2">Admin</div>
+        <h1 class="mb-0" style="font-size:clamp(1.4rem,3vw,1.9rem);">All <span style="background:linear-gradient(135deg,var(--violet),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Campaigns</span></h1>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap gap-2 mb-4" data-aos="fade-up">
+        {% for s in ['all','open','closed','completed'] %}
+        <a href="?status={{ s }}"
+           class="btn btn-sm rounded-pill {% if status == s %}btn-violet{% else %}btn-outline-secondary{% endif %} px-3">
+            {{ s|title }}
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if campaigns %}
+    <div class="card border-0 shadow-sm rounded-4" data-aos="fade-up">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead style="background:#f8f9fa;">
+                        <tr>
+                            <th class="ps-4">Campaign</th>
+                            <th>Brand</th>
+                            <th>Budget</th>
+                            <th>Platform</th>
+                            <th>Apps</th>
+                            <th>Deadline</th>
+                            <th class="pe-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in campaigns %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-semibold small" style="color:var(--navy);">{{ c.title }}</div>
+                                {% if c.niche %}<span class="niche-badge mt-1" style="font-size:.7rem;">{{ c.niche }}</span>{% endif %}
+                            </td>
+                            <td class="text-muted small">{{ c.brand.company_name }}</td>
+                            <td class="fw-semibold small" style="color:var(--violet);">Rs. {{ '{:,.0f}'.format(c.budget) }}</td>
+                            <td>
+                                {% if c.platform %}
+                                <span class="niche-badge" style="font-size:.7rem;"><i class="fab fa-{{ c.platform|lower }} me-1"></i>{{ c.platform|title }}</span>
+                                {% else %}<span class="text-muted small">—</span>{% endif %}
+                            </td>
+                            <td class="text-muted small">{{ c.applications|length }}</td>
+                            <td class="text-muted small">{{ c.deadline.strftime('%b %d') if c.deadline else '—' }}</td>
+                            <td class="pe-4">
+                                <span class="badge rounded-pill px-2 py-1 status-{{ c.status }}" style="font-size:.7rem;">{{ c.status|title }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="fas fa-bullhorn"></i></div>
+        <h5 class="fw-bold mb-2">No campaigns found</h5>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

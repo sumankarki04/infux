@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - INFUX{% endblock %}
+{% block content %}
+<div class="container py-4">
+
+    <div class="page-hero d-flex justify-content-between align-items-center flex-wrap gap-3" data-aos="fade-up">
+        <div>
+            <div class="section-label mb-1">Control Panel</div>
+            <h2 class="mb-1">Admin <span style="background:linear-gradient(135deg,var(--violet),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Dashboard</span></h2>
+            <p class="text-muted mb-0">Platform overview and management</p>
+        </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="row g-3 mb-4">
+        {% for icon, label, val, color, link in [
+            ('users',      'Total Users',       stats.users,          '#7c3aed', url_for('admin.users')),
+            ('star',       'Influencers',        stats.influencers,    '#f59e0b', url_for('admin.influencers')),
+            ('building',   'Brands',             stats.brands,         '#0ea5e9', url_for('admin.brands')),
+            ('bullhorn',   'Campaigns',          stats.campaigns,      '#16a34a', url_for('admin.campaigns')),
+            ('clock',      'Pending Verify',     stats.pending,        '#dc2626', url_for('admin.influencers', status='pending')),
+            ('fire',       'Open Campaigns',     stats.open_campaigns, '#ea580c', url_for('admin.campaigns', status='open')),
+        ] %}
+        <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 40 }}">
+            <a href="{{ link }}" class="text-decoration-none">
+                <div class="dash-stat text-center h-100">
+                    <div class="dash-stat-icon mx-auto mb-2" style="background:{{ color }}18;">
+                        <i class="fas fa-{{ icon }}" style="color:{{ color }};font-size:1.1rem;"></i>
+                    </div>
+                    <div class="dash-stat-num">{{ val }}</div>
+                    <p class="text-muted small mb-0">{{ label }}</p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent users -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4" data-aos="fade-up">
+                <div class="d-flex justify-content-between align-items-center p-4 pb-2">
+                    <h6 class="fw-bold mb-0"><i class="fas fa-users me-2 text-violet"></i>Recent Users</h6>
+                    <a href="{{ url_for('admin.users') }}" class="btn btn-sm btn-outline-violet rounded-pill">All Users</a>
+                </div>
+                <div class="card-body px-4 pt-2">
+                    {% for u in recent_users %}
+                    <div class="d-flex align-items-center gap-3 py-2 border-bottom border-1" style="border-color:#f1f5f9!important;">
+                        <img src="{{ u.avatar_url() }}" class="rounded-circle flex-shrink-0"
+                             style="width:36px;height:36px;object-fit:cover;" alt="{{ u.full_name() }}">
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold small" style="color:var(--navy);">{{ u.full_name() }}</div>
+                            <div class="text-muted" style="font-size:.75rem;">{{ u.email }}</div>
+                        </div>
+                        <span class="badge rounded-pill px-2 py-1
+                            {% if u.user_type == 'influencer' %}status-verified
+                            {% elif u.user_type == 'brand' %}status-accepted
+                            {% else %}bg-dark{% endif %}"
+                              style="font-size:.7rem;">{{ u.user_type|title }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent campaigns -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4" data-aos="fade-up" data-aos-delay="80">
+                <div class="d-flex justify-content-between align-items-center p-4 pb-2">
+                    <h6 class="fw-bold mb-0"><i class="fas fa-bullhorn me-2 text-violet"></i>Recent Campaigns</h6>
+                    <a href="{{ url_for('admin.campaigns') }}" class="btn btn-sm btn-outline-violet rounded-pill">All</a>
+                </div>
+                <div class="card-body px-4 pt-2">
+                    {% for c in recent_campaigns %}
+                    <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-1" style="border-color:#f1f5f9!important;">
+                        <div>
+                            <div class="fw-semibold small" style="color:var(--navy);">{{ c.title }}</div>
+                            <div class="text-muted" style="font-size:.75rem;">{{ c.brand.company_name }} · Rs. {{ '{:,.0f}'.format(c.budget) }}</div>
+                        </div>
+                        <span class="badge rounded-pill px-2 py-1 status-{{ c.status }}" style="font-size:.7rem;">{{ c.status|title }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 p-4" data-aos="fade-up" data-aos-delay="120">
+                <h6 class="fw-bold mb-3"><i class="fas fa-bolt me-2" style="color:var(--gold);"></i>Quick Actions</h6>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('admin.influencers', status='pending') }}"
+                       class="btn btn-gold rounded-pill px-4">
+                        <i class="fas fa-user-check me-2"></i>Review Pending ({{ stats.pending }})
+                    </a>
+                    <a href="{{ url_for('admin.campaigns', status='open') }}"
+                       class="btn btn-outline-violet rounded-pill px-4">
+                        <i class="fas fa-bullhorn me-2"></i>Open Campaigns
+                    </a>
+                    <a href="{{ url_for('admin.brands') }}"
+                       class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="fas fa-building me-2 text-violet"></i>Manage Brands
+                    </a>
+                    <a href="{{ url_for('admin.users') }}"
+                       class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="fas fa-users me-2 text-violet"></i>All Users
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

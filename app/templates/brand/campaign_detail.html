@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}{{ campaign.title }} - INFUX{% endblock %}
+{% block content %}
+
+<div class="inner-banner">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item"><a href="{{ url_for('brand.my_campaigns') }}">Campaigns</a></li>
+                <li class="breadcrumb-item active">{{ campaign.title }}</li>
+            </ol>
+        </nav>
+        <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+            <div>
+                <div class="section-label mb-2">Campaign</div>
+                <h1 class="mb-1" style="font-size:clamp(1.4rem,3vw,1.9rem);">{{ campaign.title }}</h1>
+                <span class="badge rounded-pill px-3 py-2 status-{{ campaign.status }}">{{ campaign.status|title }}</span>
+            </div>
+            {% if campaign.status == 'open' %}
+            <form method="POST" action="{{ url_for('brand.close_campaign', campaign_id=campaign.campaign_id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-outline-danger rounded-pill px-4"
+                        data-confirm="Close this campaign?">
+                    <i class="fas fa-times-circle me-2"></i>Close Campaign
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Campaign details -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4" data-aos="fade-up">
+                <h6 class="fw-bold mb-3"><i class="fas fa-info-circle me-2 text-violet"></i>Details</h6>
+                <div class="d-flex flex-column gap-3">
+                    <div>
+                        <div class="text-muted small mb-1">Budget</div>
+                        <div class="campaign-budget">Rs. {{ '{:,.0f}'.format(campaign.budget) }}</div>
+                    </div>
+                    {% if campaign.platform %}
+                    <div>
+                        <div class="text-muted small mb-1">Platform</div>
+                        <span class="niche-badge"><i class="fab fa-{{ campaign.platform|lower }} me-1"></i>{{ campaign.platform|title }}</span>
+                    </div>
+                    {% endif %}
+                    {% if campaign.niche %}
+                    <div>
+                        <div class="text-muted small mb-1">Niche</div>
+                        <span class="niche-badge" style="background:#fef3c7;color:#92400e;">{{ campaign.niche }}</span>
+                    </div>
+                    {% endif %}
+                    {% if campaign.deadline %}
+                    <div>
+                        <div class="text-muted small mb-1">Deadline</div>
+                        <div class="fw-semibold">{{ campaign.deadline.strftime('%b %d, %Y') }}</div>
+                    </div>
+                    {% endif %}
+                    {% if campaign.location %}
+                    <div>
+                        <div class="text-muted small mb-1">Location</div>
+                        <div class="fw-semibold"><i class="fas fa-map-marker-alt me-1 text-violet"></i>{{ campaign.location }}</div>
+                    </div>
+                    {% endif %}
+                    {% if campaign.min_followers or campaign.max_followers %}
+                    <div>
+                        <div class="text-muted small mb-1">Followers Required</div>
+                        <div class="fw-semibold">
+                            {% if campaign.min_followers %}{{ '{:,}'.format(campaign.min_followers) }}{% else %}Any{% endif %}
+                            {% if campaign.max_followers %} – {{ '{:,}'.format(campaign.max_followers) }}{% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <div class="text-muted small mb-1">Created</div>
+                        <div class="fw-semibold">{{ campaign.created_at.strftime('%b %d, %Y') }}</div>
+                    </div>
+                </div>
+            </div>
+
+            {% if campaign.description %}
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4" data-aos="fade-up" data-aos-delay="60">
+                <h6 class="fw-bold mb-3"><i class="fas fa-align-left me-2 text-violet"></i>Description</h6>
+                <p class="text-muted small mb-0" style="line-height:1.7;">{{ campaign.description }}</p>
+            </div>
+            {% endif %}
+
+            {% if campaign.deliverables %}
+            <div class="card border-0 shadow-sm rounded-4 p-4" data-aos="fade-up" data-aos-delay="80">
+                <h6 class="fw-bold mb-3"><i class="fas fa-tasks me-2 text-violet"></i>Deliverables</h6>
+                <p class="text-muted small mb-0" style="line-height:1.7;">{{ campaign.deliverables }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Applications -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4" data-aos="fade-up">
+                <div class="d-flex justify-content-between align-items-center p-4 pb-2">
+                    <h6 class="fw-bold mb-0">
+                        <i class="fas fa-paper-plane me-2 text-violet"></i>Applications
+                        <span class="badge rounded-pill ms-2" style="background:var(--violet);color:#fff;">{{ campaign.applications|length }}</span>
+                    </h6>
+                </div>
+                <div class="card-body px-4 pt-2">
+                    {% if campaign.applications %}
+                    {% for app in campaign.applications|sort(attribute='created_at', reverse=True) %}
+                    <div class="app-item" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 40 }}">
+                        <div class="d-flex align-items-start gap-3">
+                            <img src="{{ app.influencer.user.avatar_url() }}"
+                                 class="rounded-circle flex-shrink-0"
+                                 style="width:48px;height:48px;object-fit:cover;border:2px solid var(--violet-light);"
+                                 alt="{{ app.influencer.user.full_name() }}">
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-1">
+                                    <div>
+                                        <a href="{{ url_for('public.influencer_profile', user_id=app.influencer.user_id) }}"
+                                           class="fw-bold text-decoration-none" style="color:var(--navy);">
+                                            {{ app.influencer.user.full_name() }}
+                                        </a>
+                                        {% if app.influencer.niche %}
+                                        <span class="niche-badge ms-2" style="font-size:.7rem;">{{ app.influencer.niche }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <span class="badge rounded-pill px-3 py-1 status-{{ app.status }}">{{ app.status|title }}</span>
+                                </div>
+                                <div class="d-flex flex-wrap gap-3 mb-2 text-muted small">
+                                    <span><i class="fas fa-users me-1" style="color:var(--violet);"></i>{{ '{:,}'.format(app.influencer.total_followers()) }} followers</span>
+                                    {% if app.influencer.engagement_rate %}
+                                    <span><i class="fas fa-chart-line me-1" style="color:var(--gold);"></i>{{ app.influencer.engagement_rate }}% engagement</span>
+                                    {% endif %}
+                                    <span><i class="far fa-clock me-1"></i>{{ app.created_at.strftime('%b %d') }}</span>
+                                </div>
+                                {% if app.message %}
+                                <p class="text-muted small mb-2" style="line-height:1.6;background:#f8f9fa;padding:.5rem .75rem;border-radius:.5rem;border-left:3px solid var(--violet);">
+                                    {{ app.message }}
+                                </p>
+                                {% endif %}
+                                {% if app.status == 'pending' %}
+                                <div class="d-flex gap-2">
+                                    <form method="POST" action="{{ url_for('brand.handle_application', application_id=app.application_id, action='accept') }}">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button class="btn btn-sm rounded-pill px-3" style="background:#dcfce7;color:#166534;border:none;">
+                                            <i class="fas fa-check me-1"></i>Accept
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('brand.handle_application', application_id=app.application_id, action='reject') }}">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button class="btn btn-sm rounded-pill px-3" style="background:#fee2e2;color:#991b1b;border:none;">
+                                            <i class="fas fa-times me-1"></i>Reject
+                                        </button>
+                                    </form>
+                                </div>
+                                {% elif app.status == 'accepted' %}
+                                <a href="{{ url_for('chat.chat', partner_id=app.influencer.user_id) }}"
+                                   class="btn btn-sm btn-outline-violet rounded-pill px-3">
+                                    <i class="fas fa-comment me-1"></i>Message
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="empty-state py-4">
+                        <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                        <h6 class="fw-bold mb-2">No applications yet</h6>
+                        <p class="text-muted small">Share your campaign to attract creators.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

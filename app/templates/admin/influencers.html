@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Manage Influencers - INFUX{% endblock %}
+{% block content %}
+
+<div class="inner-banner">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item"><a href="{{ url_for('admin.dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Influencers</li>
+            </ol>
+        </nav>
+        <div class="section-label mb-2">Admin</div>
+        <h1 class="mb-0" style="font-size:clamp(1.4rem,3vw,1.9rem);">Manage <span style="background:linear-gradient(135deg,var(--violet),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Influencers</span></h1>
+    </div>
+</div>
+
+<div class="container py-4">
+    <!-- Status tabs -->
+    <div class="d-flex flex-wrap gap-2 mb-4" data-aos="fade-up">
+        {% for s in ['pending','verified','rejected'] %}
+        <a href="?status={{ s }}"
+           class="btn btn-sm rounded-pill {% if status == s %}btn-violet{% else %}btn-outline-secondary{% endif %} px-3">
+            {{ s|title }}
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if influencers %}
+    <div class="row g-3">
+        {% for inf in influencers %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index0 % 3 * 60 }}">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                <div class="d-flex align-items-start gap-3 mb-3">
+                    <img src="{{ inf.user.avatar_url() }}" class="rounded-circle flex-shrink-0"
+                         style="width:52px;height:52px;object-fit:cover;border:2px solid var(--violet-light);"
+                         alt="{{ inf.user.full_name() }}">
+                    <div>
+                        <div class="fw-bold" style="color:var(--navy);">{{ inf.user.full_name() }}</div>
+                        <div class="text-muted small">{{ inf.user.email }}</div>
+                        {% if inf.niche %}<span class="niche-badge mt-1" style="font-size:.7rem;">{{ inf.niche }}</span>{% endif %}
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-2 mb-3 text-muted small">
+                    <span><i class="fas fa-users me-1" style="color:var(--violet);"></i>{{ '{:,}'.format(inf.total_followers()) }}</span>
+                    {% if inf.engagement_rate %}
+                    <span><i class="fas fa-chart-line me-1" style="color:var(--gold);"></i>{{ inf.engagement_rate }}%</span>
+                    {% endif %}
+                    <span><i class="fas fa-star me-1" style="color:var(--gold);"></i>Score {{ inf.creator_score|round(1) }}</span>
+                </div>
+                {% if inf.bio %}
+                <p class="text-muted small mb-3" style="line-height:1.6;font-size:.8rem;">{{ inf.bio[:120] }}{% if inf.bio|length > 120 %}...{% endif %}</p>
+                {% endif %}
+                <div class="d-flex gap-2 mt-auto">
+                    {% if status == 'pending' %}
+                    <form method="POST" action="{{ url_for('admin.verify_influencer', inf_id=inf.influencer_id) }}" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="action" value="approve">
+                        <button class="btn btn-sm rounded-pill px-3" style="background:#dcfce7;color:#166534;border:none;">
+                            <i class="fas fa-check me-1"></i>Verify
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin.verify_influencer', inf_id=inf.influencer_id) }}" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="action" value="reject">
+                        <button class="btn btn-sm rounded-pill px-3" style="background:#fee2e2;color:#991b1b;border:none;">
+                            <i class="fas fa-times me-1"></i>Reject
+                        </button>
+                    </form>
+                    {% else %}
+                    <span class="badge rounded-pill px-3 py-2 status-{{ inf.verification_status }}">{{ inf.verification_status|title }}</span>
+                    {% endif %}
+                    <a href="{{ url_for('public.influencer_profile', user_id=inf.user_id) }}"
+                       class="btn btn-sm btn-outline-secondary rounded-pill px-3 ms-auto">View</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="fas fa-user-check"></i></div>
+        <h5 class="fw-bold mb-2">No {{ status }} influencers</h5>
+        <p class="text-muted">Nothing here right now.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

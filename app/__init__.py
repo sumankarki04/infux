@@ -1,0 +1,58 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
+from flask_migrate import Migrate
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_caching import Cache
+from config import Config
+import os
+
+db = SQLAlchemy()
+login_manager = LoginManager()
+csrf = CSRFProtect()
+migrate = Migrate()
+limiter = Limiter(key_func=get_remote_address)
+cache = Cache()
+
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+    db.init_app(app)
+    login_manager.init_app(app)
+    csrf.init_app(app)
+    migrate.init_app(app, db)
+    limiter.init_app(app)
+    cache.init_app(app, config={'CACHE_TYPE': 'SimpleCache'})
+
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = 'Please log in to access this page.'
+    login_manager.login_message_category = 'warning'
+
+    from app.routes.public import public_bp
+    from app.routes.auth import auth_bp
+    from app.routes.influencer import influencer_bp
+    from app.routes.brand import brand_bp
+    from app.routes.admin import admin_bp
+    from app.routes.chat import chat_bp
+
+    app.register_blueprint(public_bp)
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(influencer_bp, url_prefix='/influencer')
+    app.register_blueprint(brand_bp, url_prefix='/brand')
+    app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(chat_bp, url_prefix='/chat')
+
+    csrf.exempt(chat_bp)
+
+    with app.app_context():
+        db.create_all()
+        from app.utils.seed import seed_data
+        seed_data()
+
+    return app

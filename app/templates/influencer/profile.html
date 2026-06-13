@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}My Profile - INFUX{% endblock %}
+{% block content %}
+
+<div class="inner-banner">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item"><a href="{{ url_for('influencer.dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item active">My Profile</li>
+            </ol>
+        </nav>
+        <div class="section-label mb-2">Account</div>
+        <h1 class="mb-1" style="font-size:clamp(1.4rem,3vw,1.9rem);">My <span style="background:linear-gradient(135deg,var(--violet),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Profile</span></h1>
+    </div>
+</div>
+
+<div class="container py-4">
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="row g-4">
+            <!-- Personal info -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4" data-aos="fade-up">
+                    <h6 class="fw-bold mb-4"><i class="fas fa-user me-2 text-violet"></i>Personal Information</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="first_name" class="form-control" value="{{ current_user.first_name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="last_name" class="form-control" value="{{ current_user.last_name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" name="phone" class="form-control" value="{{ current_user.phone or '' }}" pattern="[0-9]{10,11}" placeholder="98XXXXXXXX">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">City</label>
+                            <input type="text" name="city" class="form-control" value="{{ current_user.city or '' }}">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Bio</label>
+                            <textarea name="bio" class="form-control" rows="3" placeholder="Tell brands about yourself...">{{ inf.bio or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social & Stats -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4" data-aos="fade-up">
+                    <h6 class="fw-bold mb-4"><i class="fas fa-share-alt me-2 text-violet"></i>Social Media</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fab fa-instagram me-1 text-danger"></i>Instagram Handle</label>
+                            <input type="text" name="instagram_handle" class="form-control" value="{{ inf.instagram_handle or '' }}" placeholder="@username">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Instagram Followers</label>
+                            <input type="number" name="instagram_followers" class="form-control" value="{{ inf.instagram_followers or 0 }}" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fab fa-tiktok me-1"></i>TikTok Handle</label>
+                            <input type="text" name="tiktok_handle" class="form-control" value="{{ inf.tiktok_handle or '' }}" placeholder="@username">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">TikTok Followers</label>
+                            <input type="number" name="tiktok_followers" class="form-control" value="{{ inf.tiktok_followers or 0 }}" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fab fa-youtube me-1 text-danger"></i>YouTube Handle</label>
+                            <input type="text" name="youtube_handle" class="form-control" value="{{ inf.youtube_handle or '' }}" placeholder="@channel">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">YouTube Subscribers</label>
+                            <input type="number" name="youtube_subscribers" class="form-control" value="{{ inf.youtube_subscribers or 0 }}" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fab fa-facebook me-1" style="color:#1877f2;"></i>Facebook Handle</label>
+                            <input type="text" name="facebook_handle" class="form-control" value="{{ inf.facebook_handle or '' }}" placeholder="Page name">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Facebook Followers</label>
+                            <input type="number" name="facebook_followers" class="form-control" value="{{ inf.facebook_followers or 0 }}" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Engagement Rate (%)</label>
+                            <input type="number" step="0.1" name="engagement_rate" class="form-control" value="{{ inf.engagement_rate or 0 }}" min="0" max="100">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Portfolio URL</label>
+                            <input type="url" name="portfolio_url" class="form-control" value="{{ inf.portfolio_url or '' }}" placeholder="https://...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <h6 class="fw-bold mb-3"><i class="fas fa-cog me-2 text-violet"></i>Preferences</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Primary Niche</label>
+                        <select name="niche" class="form-select">
+                            <option value="">Select niche</option>
+                            {% for n in ['Tech','Fashion','Food','Travel','Fitness','Beauty','Gaming','Education','Finance','Lifestyle','Music','Sports'] %}
+                            <option value="{{ n }}" {% if inf.niche == n %}selected{% endif %}>{{ n }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Profile Picture</label>
+                        <input type="file" name="profile_picture" class="form-control" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 p-4" data-aos="fade-up" data-aos-delay="150">
+                    <h6 class="fw-bold mb-3"><i class="fas fa-chart-bar me-2 text-violet"></i>Stats</h6>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Creator Score</span>
+                        <span class="fw-bold" style="color:var(--violet);">{{ inf.creator_score }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Total Followers</span>
+                        <span class="fw-bold">{{ (inf.total_followers()/1000)|round(1) }}K</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">Verification</span>
+                        <span class="badge rounded-pill px-3 py-2 status-{{ inf.verification_status }}">{{ inf.verification_status | title }}</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-violet w-100 rounded-pill py-2 mt-3">
+                    <i class="fas fa-save me-2"></i>Save Profile
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

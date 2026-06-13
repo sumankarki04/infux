@@ -1,0 +1,453 @@
+Your idea, **INFUX**, has the potential to be much more than a college project if it's executed well. Here's a detailed breakdown.
+
+# What is INFUX?
+
+INFUX is a platform that connects **brands** and **influencers/content creators** for marketing collaborations.
+
+Today, many brands struggle to find the right creators, and many creators struggle to find sponsorships. INFUX solves this by acting as a trusted marketplace.
+
+Think of it as:
+
+* LinkedIn for professional creator networking
+* Fiverr for influencer services
+* Upfluence for influencer discovery
+* CreatorIQ for campaign management
+
+---
+
+# The Problem
+
+## For Brands
+
+Brands often ask:
+
+* Which influencer is genuine?
+* Which influencer fits my audience?
+* How much should I pay?
+* How do I track campaign results?
+* How do I avoid fake followers?
+
+Most businesses, especially small businesses in Nepal, don't have easy access to influencer marketing tools.
+
+---
+
+## For Influencers
+
+Influencers often face:
+
+* No consistent sponsorship opportunities
+* Difficulty reaching brands
+* Unclear payment processes
+* Lack of a professional portfolio
+
+Many creators rely on Instagram DMs and personal contacts.
+
+---
+
+# The Solution
+
+INFUX creates a centralized ecosystem.
+
+### Brand Workflow
+
+1. Brand creates account
+2. Brand creates campaign
+3. Brand specifies:
+
+   * Budget
+   * Audience
+   * Platform
+   * Location
+   * Goals
+4. AI recommends suitable creators
+5. Brand sends offers
+6. Creator accepts
+7. Campaign runs
+8. Payment is released
+9. Both parties leave reviews
+
+---
+
+### Influencer Workflow
+
+1. Creator registers
+2. Connects social accounts
+3. Builds portfolio
+4. Receives campaign suggestions
+5. Applies or accepts offers
+6. Delivers content
+7. Gets paid
+8. Builds reputation score
+
+---
+
+# Why This Can Work in Nepal
+
+The creator economy is growing rapidly.
+
+Many Nepali brands use:
+
+* Facebook
+* Instagram
+* TikTok
+* YouTube
+
+But influencer partnerships are often managed manually through messages and calls.
+
+INFUX could become a localized creator marketplace for Nepal before expanding internationally.
+
+---
+
+# Core Modules
+
+## 1. Authentication System
+
+Users can:
+
+* Register
+* Login
+* Reset password
+* Enable 2FA
+* Verify email
+
+Roles:
+
+* Admin
+* Brand
+* Influencer
+
+---
+
+## 2. Influencer Profiles
+
+Each creator profile contains:
+
+* Profile photo
+* Bio
+* Social media links
+* Niche
+* Audience demographics
+* Engagement rate
+* Portfolio
+* Reviews
+* Creator score
+
+Example:
+
+```text
+Name: Suman Karki
+Niche: Technology
+Followers: 150,000
+Engagement: 7.8%
+Location: Nepal
+```
+
+---
+
+## 3. Brand Profiles
+
+Contains:
+
+* Company logo
+* Industry
+* Website
+* Description
+* Previous campaigns
+* Reviews
+
+---
+
+## 4. Campaign Marketplace
+
+Brands post campaigns.
+
+Example:
+
+```text
+Title:
+Tech Product Launch
+
+Budget:
+$2,000
+
+Platform:
+YouTube
+
+Deliverables:
+1 Video
+2 Shorts
+
+Deadline:
+30 Days
+```
+
+Creators apply.
+
+---
+
+## 5. Smart Search
+
+Filters:
+
+* Followers
+* Engagement
+* Location
+* Language
+* Niche
+* Platform
+
+Example:
+
+```text
+Find:
+Tech creators
+Nepal
+50k–500k followers
+```
+
+---
+
+## 6. AI Matching Engine
+
+One of INFUX's strongest features.
+
+The AI evaluates:
+
+* Audience overlap
+* Niche relevance
+* Past campaign performance
+* Engagement quality
+* Budget fit
+
+Output:
+
+```text
+Match Score:
+95%
+```
+
+---
+
+## 7. Messaging System
+
+Features:
+
+* Real-time chat
+* File uploads
+* Contracts
+* Voice messages
+* Notifications
+
+Similar to LinkedIn messaging.
+
+---
+
+## 8. Escrow Payment System
+
+This builds trust.
+
+Workflow:
+
+```text
+Brand pays
+↓
+Funds held
+↓
+Creator completes work
+↓
+Brand approves
+↓
+Creator receives payment
+```
+
+---
+
+## 9. Analytics
+
+Brand dashboard:
+
+* Reach
+* Impressions
+* Engagement
+* Clicks
+* Conversions
+* ROI
+
+Creator dashboard:
+
+* Earnings
+* Campaign history
+* Growth metrics
+
+---
+
+## 10. Review System
+
+Both sides leave feedback.
+
+Example:
+
+```text
+Brand Rating: 4.9
+
+Communication: Excellent
+Delivery: On Time
+Quality: Excellent
+```
+
+---
+
+# Revenue Model
+
+### Subscription
+
+Starter
+
+```text
+$29/month
+```
+
+Pro
+
+```text
+$99/month
+```
+
+Agency
+
+```text
+$299/month
+```
+
+### Commission
+
+Take:
+
+```text
+5%
+```
+
+from successful deals.
+
+### Featured Profiles
+
+Creators pay to appear higher in search results.
+
+---
+
+# Technical Architecture
+
+Frontend:
+
+* HTML
+* CSS
+* JavaScript
+* React
+
+Backend:
+
+* Python
+* Django
+* Django REST Framework
+
+Database:
+
+* PostgreSQL
+
+Cloud:
+
+* AWS
+
+Storage:
+
+* S3
+
+Authentication:
+
+* JWT
+
+Deployment:
+
+* Docker
+* Nginx
+* Linux VPS
+
+---
+
+# Claude Research Prompt
+
+Use this prompt with Claude:
+
+```text
+Act as a world-class startup CTO, product strategist, UX designer, software architect, venture capitalist, growth marketer, and creator economy expert.
+
+Your task is to perform deep research before generating any output.
+
+Research competitors including:
+- Upfluence
+- CreatorIQ
+- Aspire
+- GRIN
+- Influencity
+- Modash
+- LinkedIn Creator Marketplace
+
+Use every available research capability, web search, MCP connector, plugin, tool, browser integration, document retrieval system, API access, and knowledge source available to you.
+
+Analyze:
+1. Features
+2. Pricing
+3. Business models
+4. User experience
+5. Market gaps
+6. Technical architecture
+7. Competitive advantages
+8. Weaknesses
+
+Then design a superior platform called INFUX.
+
+Deliver:
+
+- Executive Summary
+- Startup Vision
+- Market Analysis
+- Competitor Analysis
+- Product Requirements Document (PRD)
+- Complete User Flows
+- Information Architecture
+- Database Schema
+- ER Diagram
+- API Specification
+- React Frontend Architecture
+- Django Backend Architecture
+- PostgreSQL Schema
+- AWS Infrastructure
+- Security Architecture
+- AI Matching System Design
+- Escrow Payment Design
+- Notification System
+- Messaging System
+- Analytics System
+- Subscription Model
+- Revenue Forecast
+- Go-to-Market Strategy
+- Investor Pitch Deck
+- MVP Plan
+- 6-Month Roadmap
+- 12-Month Roadmap
+- Launch Checklist
+
+Do not make assumptions. Research first, then generate recommendations based on evidence and industry best practices.
+```
+
+One thing I'd recommend for you specifically, Suman: start with an **MVP (Minimum Viable Product)** consisting of:
+
+1. Login/Register
+2. Influencer Profiles
+3. Brand Profiles
+4. Campaign Posting
+5. Campaign Applications
+6. Messaging
+7. Admin Dashboard
+
+Build those first. Once they work, add AI matching, analytics, and payments. That's the fastest path from a college project to something you could actually launch.

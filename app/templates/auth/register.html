@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Join INFUX{% endblock %}
+{% block content %}
+<div class="container py-5" style="min-height:80vh;display:flex;align-items:center;">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-7 col-lg-6" data-aos="fade-up">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="navbar-brand d-inline-block mb-2" style="font-size:1.8rem;">INFUX</div>
+                    <h3 class="mb-0">Create Your Account</h3>
+                    <p style="color:rgba(255,255,255,.5);font-size:.88rem;margin-top:.3rem;">Join Nepal's creator marketplace</p>
+                </div>
+                <div class="auth-body">
+                    <!-- Account type toggle -->
+                    <div class="mb-4">
+                        <label class="form-label">I am a...</label>
+                        <div class="d-flex gap-2">
+                            <label class="flex-fill text-center border rounded-3 p-3 cursor-pointer" id="lbl-influencer"
+                                   style="cursor:pointer;transition:all .2s;border-color:var(--violet)!important;background:var(--violet-lt);">
+                                <input type="radio" name="user_type" value="influencer" id="type-influencer" class="d-none" checked>
+                                <i class="fas fa-star d-block mb-1 text-violet fa-lg"></i>
+                                <span class="small fw-bold">Creator / Influencer</span>
+                            </label>
+                            <label class="flex-fill text-center border rounded-3 p-3 cursor-pointer" id="lbl-brand"
+                                   style="cursor:pointer;transition:all .2s;">
+                                <input type="radio" name="user_type" value="brand" id="type-brand" class="d-none">
+                                <i class="fas fa-building d-block mb-1 text-muted fa-lg"></i>
+                                <span class="small fw-bold">Brand / Business</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <form method="POST" id="regForm">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="user_type" id="userTypeHidden" value="influencer">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="first_name" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="last_name" class="form-control" required>
+                            </div>
+
+                            <!-- Brand only field -->
+                            <div class="col-12 brand-field d-none">
+                                <label class="form-label">Company Name</label>
+                                <input type="text" name="company_name" class="form-control">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">City</label>
+                                <input type="text" name="city" class="form-control" placeholder="e.g. Kathmandu">
+                            </div>
+
+                            <!-- Influencer only fields -->
+                            <div class="col-md-6 inf-field">
+                                <label class="form-label">Primary Niche</label>
+                                <select name="niche" class="form-select">
+                                    <option value="">Select niche</option>
+                                    {% for n in ['Tech','Fashion','Food','Travel','Fitness','Beauty','Gaming','Education','Finance','Lifestyle','Music','Sports'] %}
+                                    <option value="{{ n }}">{{ n }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Brand only fields -->
+                            <div class="col-md-6 brand-field d-none">
+                                <label class="form-label">Industry</label>
+                                <input type="text" name="industry" class="form-control" placeholder="e.g. Retail">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password" id="pw" class="form-control" required minlength="6">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" name="confirm_password" id="cpw" class="form-control" required>
+                                <div id="pwHint" class="small mt-1"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-violet w-100 py-2 mt-4">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </form>
+                    <p class="text-center text-muted small mt-3 mb-0">
+                        Already on INFUX? <a href="{{ url_for('auth.login') }}" class="fw-semibold" style="color:var(--violet);">Sign in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const lblInf   = document.getElementById('lbl-influencer');
+const lblBrand = document.getElementById('lbl-brand');
+const hidden   = document.getElementById('userTypeHidden');
+
+function setType(type) {
+    hidden.value = type;
+    document.querySelectorAll('.inf-field').forEach(e => e.classList.toggle('d-none', type !== 'influencer'));
+    document.querySelectorAll('.brand-field').forEach(e => e.classList.toggle('d-none', type !== 'brand'));
+    lblInf.style.borderColor   = type === 'influencer' ? 'var(--violet)' : '#dee2e6';
+    lblInf.style.background    = type === 'influencer' ? 'var(--violet-lt)' : '';
+    lblBrand.style.borderColor = type === 'brand' ? 'var(--violet)' : '#dee2e6';
+    lblBrand.style.background  = type === 'brand' ? 'var(--violet-lt)' : '';
+}
+lblInf.addEventListener('click',   () => setType('influencer'));
+lblBrand.addEventListener('click', () => setType('brand'));
+
+const pw = document.getElementById('pw');
+const cpw = document.getElementById('cpw');
+const hint = document.getElementById('pwHint');
+[pw, cpw].forEach(el => el.addEventListener('input', () => {
+    if (!cpw.value) { hint.textContent = ''; return; }
+    if (pw.value === cpw.value) {
+        hint.textContent = '✓ Passwords match';
+        hint.style.color = 'var(--green)';
+    } else {
+        hint.textContent = '✗ Passwords do not match';
+        hint.style.color = '#e11d48';
+    }
+}));
+</script>
+{% endblock %}

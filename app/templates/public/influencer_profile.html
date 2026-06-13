@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}{{ inf.user.full_name() }} - INFUX{% endblock %}
+{% block content %}
+
+<div class="inner-banner">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item"><a href="{{ url_for('public.discover') }}">Discover</a></li>
+                <li class="breadcrumb-item active">{{ inf.user.full_name() }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Profile card -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center" data-aos="fade-up">
+                <img src="{{ url_for('static', filename='uploads/' + inf.user.profile_picture) }}"
+                     style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid var(--violet-lt);margin:0 auto 1rem;"
+                     onerror="this.src='https://ui-avatars.com/api/?name={{ inf.user.first_name }}&background=7c3aed&color=fff&size=100'"
+                     alt="{{ inf.user.full_name() }}">
+                <h5 class="fw-bold mb-1">{{ inf.user.full_name() }}</h5>
+                <div class="niche-badge mb-2 d-inline-block">{{ inf.niche or 'Creator' }}</div>
+                <p class="text-muted small mb-3"><i class="fas fa-map-marker-alt me-1 text-violet"></i>{{ inf.user.city or 'Nepal' }}</p>
+
+                {% if inf.verification_status == 'verified' %}
+                <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span class="small fw-semibold text-success">Verified Creator</span>
+                </div>
+                {% endif %}
+
+                <div class="inf-score d-inline-block mb-3" style="font-size:.85rem;">Creator Score: {{ inf.creator_score }}</div>
+
+                {% if current_user.is_authenticated and current_user.user_type == 'brand' %}
+                <a href="{{ url_for('chat.chat', partner_id=inf.user.user_id) }}"
+                   class="btn btn-violet rounded-pill w-100 mb-2">
+                    <i class="fas fa-comment me-2"></i>Message
+                </a>
+                {% elif not current_user.is_authenticated %}
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-violet rounded-pill w-100">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login to Contact
+                </a>
+                {% endif %}
+
+                {% if inf.portfolio_url %}
+                <a href="{{ inf.portfolio_url }}" target="_blank" class="btn btn-outline-secondary btn-sm rounded-pill mt-2 w-100">
+                    <i class="fas fa-external-link-alt me-1"></i>Portfolio
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Details -->
+        <div class="col-lg-8">
+            <!-- Stats -->
+            <div class="row g-3 mb-4">
+                {% for platform, icon, color, count in [
+                    ('Instagram', 'instagram', '#e1306c', inf.instagram_followers),
+                    ('TikTok', 'tiktok', '#010101', inf.tiktok_followers),
+                    ('YouTube', 'youtube', '#ff0000', inf.youtube_subscribers),
+                    ('Facebook', 'facebook', '#1877f2', inf.facebook_followers)
+                ] %}
+                {% if count %}
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
+                    <div class="dash-stat text-center">
+                        <div class="dash-stat-icon mx-auto mb-2" style="background:{{ color }}18;">
+                            <i class="fab fa-{{ icon }}" style="color:{{ color }};font-size:1.2rem;"></i>
+                        </div>
+                        <div class="dash-stat-num" style="font-size:1.3rem;">{{ (count/1000)|round(1) }}K</div>
+                        <div class="text-muted small">{{ platform }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+                <div class="col-6 col-md-3" data-aos="fade-up">
+                    <div class="dash-stat text-center">
+                        <div class="dash-stat-icon mx-auto mb-2" style="background:#f59e0b18;">
+                            <i class="fas fa-fire" style="color:#f59e0b;font-size:1.2rem;"></i>
+                        </div>
+                        <div class="dash-stat-num" style="font-size:1.3rem;">{{ inf.engagement_rate }}%</div>
+                        <div class="text-muted small">Engagement</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bio -->
+            {% if inf.bio %}
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4" data-aos="fade-up">
+                <h6 class="fw-bold mb-3"><i class="fas fa-user me-2 text-violet"></i>About</h6>
+                <p class="text-muted mb-0">{{ inf.bio }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Social handles -->
+            <div class="card border-0 shadow-sm rounded-4 p-4" data-aos="fade-up">
+                <h6 class="fw-bold mb-3"><i class="fas fa-share-alt me-2 text-violet"></i>Social Media</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    {% if inf.instagram_handle %}
+                    <span class="badge rounded-pill px-3 py-2" style="background:#e1306c18;color:#e1306c;font-size:.82rem;">
+                        <i class="fab fa-instagram me-1"></i>{{ inf.instagram_handle }}
+                    </span>
+                    {% endif %}
+                    {% if inf.tiktok_handle %}
+                    <span class="badge rounded-pill px-3 py-2" style="background:#01010118;color:#333;font-size:.82rem;">
+                        <i class="fab fa-tiktok me-1"></i>{{ inf.tiktok_handle }}
+                    </span>
+                    {% endif %}
+                    {% if inf.youtube_handle %}
+                    <span class="badge rounded-pill px-3 py-2" style="background:#ff000018;color:#ff0000;font-size:.82rem;">
+                        <i class="fab fa-youtube me-1"></i>{{ inf.youtube_handle }}
+                    </span>
+                    {% endif %}
+                    {% if inf.facebook_handle %}
+                    <span class="badge rounded-pill px-3 py-2" style="background:#1877f218;color:#1877f2;font-size:.82rem;">
+                        <i class="fab fa-facebook me-1"></i>{{ inf.facebook_handle }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
