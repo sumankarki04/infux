@@ -97,5 +97,8 @@ def campaigns():
 
 @public_bp.route('/influencer/<int:user_id>')
 def influencer_profile(user_id):
+    from app.models.review import Review
     inf = Influencer.query.filter_by(user_id=user_id).first_or_404()
-    return render_template('public/influencer_profile.html', inf=inf)
+    reviews = Review.query.filter_by(reviewee_id=user_id)\
+                    .order_by(Review.created_at.desc()).all()
+    return render_template('public/influencer_profile.html', inf=inf, reviews=reviews)

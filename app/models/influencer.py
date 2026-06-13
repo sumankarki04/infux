@@ -46,3 +46,17 @@ class Influencer(db.Model):
             'Facebook':  self.facebook_followers  or 0,
         }
         return max(platforms, key=platforms.get)
+
+    def update_rating_stats(self):
+        from app.models.review import Review
+        reviews = Review.query.filter_by(reviewee_id=self.user_id).all()
+        if reviews:
+            self.average_rating = round(sum(r.rating for r in reviews) / len(reviews), 1)
+            self.total_campaigns = len(set(r.campaign_id for r in reviews if r.campaign_id))
+        # Recompute creator_score including rating
+        self.creator_score = round(
+            (self.engagement_rate or 0) * 0.3
+            + (self.total_followers() / 100000) * 0.5
+            + (self.average_rating or 0) / 5 * 20 * 0.2,
+            1
+        )

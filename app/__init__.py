@@ -41,6 +41,7 @@ def create_app():
     from app.routes.admin import admin_bp
     from app.routes.chat import chat_bp
     from app.routes.payments import payments_bp
+    from app.routes.reviews import reviews_bp
 
     app.register_blueprint(public_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -49,6 +50,7 @@ def create_app():
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(chat_bp, url_prefix='/chat')
     app.register_blueprint(payments_bp, url_prefix='/pay')
+    app.register_blueprint(reviews_bp, url_prefix='/reviews')
 
     csrf.exempt(chat_bp)  # send uses JSON + X-CSRFToken header; GET poll needs no CSRF
 

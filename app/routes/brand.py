@@ -135,9 +135,17 @@ def create_campaign():
 @login_required
 @require_brand
 def campaign_detail(campaign_id):
+    from app.models.review import Review
     br = current_user.brand
     campaign = Campaign.query.filter_by(campaign_id=campaign_id, brand_id=br.brand_id).first_or_404()
-    return render_template('brand/campaign_detail.html', campaign=campaign)
+    reviewed_influencer_ids = {
+        r.campaign_id for r in
+        Review.query.filter_by(reviewer_id=current_user.user_id,
+                                campaign_id=campaign_id).all()
+    }
+    return render_template('brand/campaign_detail.html',
+                           campaign=campaign,
+                           reviewed_influencer_ids=reviewed_influencer_ids)
 
 
 @brand_bp.route('/applications/<int:application_id>/<action>', methods=['POST'])

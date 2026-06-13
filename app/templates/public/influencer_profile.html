@@ -18,7 +18,7 @@
         <!-- Profile card -->
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 p-4 text-center" data-aos="fade-up">
-                <img src="{{ url_for('static', filename='uploads/' + inf.user.profile_picture) }}"
+                <img src="{{ inf.user.avatar_url() }}"
                      style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid var(--violet-lt);margin:0 auto 1rem;"
                      onerror="this.src='https://ui-avatars.com/api/?name={{ inf.user.first_name }}&background=7c3aed&color=fff&size=100'"
                      alt="{{ inf.user.full_name() }}">
@@ -120,6 +120,61 @@
                     </span>
                     {% endif %}
                 </div>
+            </div>
+
+            <!-- Reviews -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mt-4" data-aos="fade-up">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0">
+                        <i class="fas fa-star me-2 text-warning"></i>Reviews
+                        <span class="text-muted fw-normal small ms-1">({{ reviews|length }})</span>
+                    </h6>
+                    {% if inf.average_rating %}
+                    <div class="d-flex align-items-center gap-2">
+                        <span style="font-size:1.3rem;font-weight:800;color:var(--navy);font-family:'Syne',sans-serif;">{{ inf.average_rating }}</span>
+                        <div>
+                            {% for i in range(1, 6) %}
+                            <i class="fa{{ 's' if i <= inf.average_rating|int else ('s' if inf.average_rating - inf.average_rating|int >= 0.5 and i == inf.average_rating|int + 1 else 'r') }} fa-star"
+                               style="color:#f59e0b;font-size:.8rem;"></i>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if reviews %}
+                <div class="d-flex flex-column gap-3">
+                    {% for rv in reviews %}
+                    <div style="border-bottom:1px solid #f1f5f9;padding-bottom:1rem;" class="{% if loop.last %}border-0 pb-0{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="{{ rv.reviewer.avatar_url() }}"
+                                     style="width:32px;height:32px;border-radius:50%;object-fit:cover;"
+                                     onerror="this.src='https://ui-avatars.com/api/?name={{ rv.reviewer.first_name }}&background=7c3aed&color=fff&size=32'"
+                                     alt="{{ rv.reviewer.full_name() }}">
+                                <div>
+                                    <div class="fw-semibold small" style="color:var(--navy);">{{ rv.reviewer.full_name() }}</div>
+                                    <div class="text-muted" style="font-size:.7rem;">{{ rv.reviewer.user_type|title }}</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div>
+                                    {% for i in range(1, 6) %}
+                                    <i class="fas fa-star" style="color:{{ '#f59e0b' if i <= rv.rating else '#e5e7eb' }};font-size:.72rem;"></i>
+                                    {% endfor %}
+                                </div>
+                                <span class="text-muted" style="font-size:.7rem;">{{ rv.created_at.strftime('%b %Y') }}</span>
+                            </div>
+                        </div>
+                        {% if rv.review_text %}
+                        <p class="text-muted small mb-0 mt-1" style="line-height:1.6;">{{ rv.review_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted small mb-0 text-center py-2">No reviews yet.</p>
+                {% endif %}
             </div>
         </div>
     </div>

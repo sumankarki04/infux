@@ -120,10 +120,17 @@ def apply(campaign_id):
 @login_required
 @require_influencer
 def my_applications():
+    from app.models.review import Review
     inf = current_user.influencer
     applications = Application.query.filter_by(influencer_id=inf.influencer_id)\
                        .order_by(Application.applied_at.desc()).all()
-    return render_template('influencer/applications.html', applications=applications)
+    reviewed_campaign_ids = {
+        r.campaign_id for r in
+        Review.query.filter_by(reviewer_id=current_user.user_id).all()
+    }
+    return render_template('influencer/applications.html',
+                           applications=applications,
+                           reviewed_campaign_ids=reviewed_campaign_ids)
 
 
 @influencer_bp.route('/verify-social', methods=['POST'])
