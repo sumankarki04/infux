@@ -95,7 +95,7 @@ def campaigns():
                            niches=NICHES, platforms=PLATFORMS)
 
 
-@public_bp.route('/influencer/<int:influencer_id>')
-def influencer_profile(influencer_id):
-    inf = Influencer.query.get_or_404(influencer_id)
+@public_bp.route('/influencer/<int:user_id>')
+def influencer_profile(user_id):
+    inf = Influencer.query.filter_by(user_id=user_id).first_or_404()
     return render_template('public/influencer_profile.html', inf=inf)
