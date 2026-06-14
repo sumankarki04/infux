@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request
+from functools import wraps
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
+from flask_login import login_required, current_user
 from app.models.user import User
 from app.models.influencer import Influencer
 from app.models.campaign import Campaign
@@ -6,6 +8,20 @@ from app.models.brand import Brand
 from app import db
 
 public_bp = Blueprint('public', __name__)
+
+
+def brands_only(f):
+    """Restrict a view to logged-in brand (customer) accounts. MVP launch gate."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not current_user.is_authenticated:
+            flash('Please log in as a brand to browse creators.', 'warning')
+            return redirect(url_for('auth.login'))
+        if current_user.user_type != 'brand':
+            flash('Creator discovery is available to brand accounts only.', 'warning')
+            return redirect(url_for('public.home'))
+        return f(*args, **kwargs)
+    return decorated
 
 NICHES = ['Tech', 'Fashion', 'Food', 'Travel', 'Fitness', 'Beauty',
           'Gaming', 'Education', 'Finance', 'Lifestyle', 'Music', 'Sports']
@@ -33,6 +49,8 @@ def home():
 
 
 @public_bp.route('/discover')
+@login_required
+@brands_only
 def discover():
     q        = request.args.get('q', '').strip()
     niche    = request.args.get('niche', '')
@@ -97,8 +115,5 @@ def campaigns():
 
 @public_bp.route('/influencer/<int:user_id>')
 def influencer_profile(user_id):
-    from app.models.review import Review
-    inf = Influencer.query.filter_by(user_id=user_id).first_or_404()
-    reviews = Review.query.filter_by(reviewee_id=user_id)\
-                    .order_by(Review.created_at.desc()).all()
-    return render_template('public/influencer_profile.html', inf=inf, reviews=reviews)
+    # Public influencer profiles hidden for MVP launch.
+    abort(404)

@@ -14,6 +14,9 @@ reviews_bp = Blueprint('reviews', __name__)
 @login_required
 @limiter.limit("10 per hour")
 def submit():
+    # Reviews disabled for MVP launch — feature inert (code below unreachable).
+    flash('Reviews are currently unavailable.', 'info')
+    return redirect(request.referrer or url_for('public.home'))
     redirect_target = request.referrer or url_for('public.home')
 
     # --- Parse form fields ---

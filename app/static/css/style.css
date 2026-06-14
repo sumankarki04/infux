@@ -754,3 +754,50 @@ img { max-width: 100%; }
 ══════════════════════════════════════════ */
 .section-bg { background: #faf8ff; }
 .section-dark { background: var(--navy); }
+
+/* ══════════════════════════════════════════
+   POLISH + ACCESSIBILITY LAYER (additive)
+══════════════════════════════════════════ */
+/* text color helpers (text-gold was used but never defined) */
+.text-gold  { color: var(--gold) !important; }
+.text-green { color: var(--green) !important; }
+.text-muted { color: #5c5872 !important; } /* AA-compliant on white (was #8b86a8 ≈ 3.3:1) */
+
+/* accessible focus — keyboard only */
+:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; border-radius: 6px; }
+.btn:focus-visible, .nav-link:focus-visible,
+.influencer-card:focus-visible, .campaign-card:focus-visible {
+  outline: 3px solid #a78bfa; outline-offset: 3px;
+}
+a:focus-visible { outline-offset: 3px; }
+
+/* button active + disabled states */
+.btn-violet:active, .btn-gold:active, .btn-outline-violet:active { transform: translateY(0); }
+.btn-violet:disabled, .btn-gold:disabled, .btn[disabled] {
+  opacity: .6; cursor: not-allowed; transform: none !important; box-shadow: none;
+}
+
+/* inline button spinner (prevents double-submit feedback) */
+.btn .btn-spinner {
+  display: inline-block; width: 1em; height: 1em; vertical-align: -.125em;
+  border: 2px solid currentColor; border-right-color: transparent;
+  border-radius: 50%; animation: btnspin .6s linear infinite; margin-right: .4rem;
+}
+@keyframes btnspin { to { transform: rotate(360deg); } }
+
+/* skip-to-content link */
+.skip-link {
+  position: absolute; left: 1rem; top: -60px; z-index: 10000;
+  background: var(--violet); color: #fff; padding: .6rem 1.2rem;
+  border-radius: 0 0 12px 12px; font-weight: 700; text-decoration: none; transition: top .2s;
+}
+.skip-link:focus { top: 0; color: #fff; }
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important; scroll-behavior: auto !important;
+  }
+  .hero-orb, .hero-creator-card { animation: none !important; }
+}

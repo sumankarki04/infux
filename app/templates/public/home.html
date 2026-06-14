@@ -169,7 +169,7 @@
                 ('user-plus',  'Create Profile',   'Register as a brand or creator and build your professional profile.', '#7c3aed'),
                 ('bullhorn',   'Post or Discover', 'Brands post campaigns. Creators discover and apply to opportunities.', '#f59e0b'),
                 ('handshake',  'Connect & Collab', 'Match, negotiate, and collaborate through the platform.', '#10b981'),
-                ('chart-line', 'Track & Grow',     'Monitor performance, collect reviews, and build your reputation score.', '#0ea5e9')
+                ('chart-line', 'Track & Grow',     'Monitor performance and build your reputation score.', '#0ea5e9')
             ] %}
             <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 80 }}">
                 <div class="how-step h-100">
@@ -186,7 +186,8 @@
     </div>
 </section>
 
-<!-- ─── TOP CREATORS ─────────────────────────── -->
+{% if current_user.is_authenticated and current_user.user_type == 'brand' %}
+<!-- ─── TOP CREATORS (brands only) ─────────────────────────── -->
 <section style="padding:5rem 0;">
     <div class="container">
         <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3" data-aos="fade-up">
@@ -201,7 +202,7 @@
         <div class="row g-3">
             {% for inf in top_influencers %}
             <div class="col-sm-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 % 4 * 55 }}">
-                <a href="{{ url_for('public.influencer_profile', user_id=inf.user_id) }}" class="text-decoration-none">
+                <div class="text-decoration-none">
                     <div class="influencer-card h-100">
                         <div class="d-flex align-items-center gap-3 mb-3">
                             <img src="{{ inf.user.avatar_url() }}"
@@ -232,12 +233,13 @@
                             <span class="inf-score">{{ inf.creator_score }} pts</span>
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
             {% endfor %}
         </div>
     </div>
 </section>
+{% endif %}
 
 <!-- ─── FEATURED CAMPAIGNS ───────────────────── -->
 <section class="section-bg" style="padding:5rem 0;">

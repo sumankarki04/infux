@@ -80,5 +80,24 @@ document.querySelectorAll('[data-confirm]').forEach(el => {
     }
 });
 
-// AOS init
-if (typeof AOS !== 'undefined') AOS.init({ duration: 700, once: true, offset: 60 });
+// AOS init (gated on reduced-motion)
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (typeof AOS !== 'undefined') {
+    AOS.init({ duration: reduceMotion ? 0 : 700, once: true, offset: 60, disable: reduceMotion });
+}
+
+// Form submit loading state — disable submit + show spinner (prevents double-submit).
+// Skips forms whose submit button uses [data-confirm]. Uses safe DOM methods (no innerHTML).
+document.querySelectorAll('form').forEach(f => {
+    f.addEventListener('submit', () => {
+        const b = f.querySelector('button[type="submit"], button:not([type])');
+        if (b && !b.disabled && !b.dataset.confirm) {
+            b.disabled = true;
+            const saved = Array.from(b.childNodes); // detached but kept for restore
+            const spinner = document.createElement('span');
+            spinner.className = 'btn-spinner';
+            b.replaceChildren(spinner, document.createTextNode(b.dataset.loading || 'Working…'));
+            setTimeout(() => { b.disabled = false; b.replaceChildren(...saved); }, 8000); // failsafe
+        }
+    });
+});
