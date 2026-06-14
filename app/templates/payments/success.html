@@ -11,7 +11,8 @@
             Rs. {{ '{:,.0f}'.format(pmt.amount) }} paid via <strong>{{ method }}</strong>.
             {% if ref %}<br>Reference: <code>{{ ref }}</code>{% endif %}
         </p>
-        <a href="{{ url_for('brand.campaign_detail', campaign_id=pmt.application.campaign_id) }}"
+        {% set cid = pmt.application.campaign_id if pmt.application else None %}
+        <a href="{{ url_for('brand.campaign_detail', campaign_id=cid) if cid else url_for('brand.dashboard') }}"
            class="btn btn-violet rounded-pill px-5">
             <i class="fas fa-arrow-left me-2"></i>Back to Campaign
         </a>
