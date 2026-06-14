@@ -54,7 +54,8 @@ def create_app():
     app.register_blueprint(reviews_bp, url_prefix='/reviews')
     app.register_blueprint(notifications_bp, url_prefix='/notifications')
 
-    csrf.exempt(chat_bp)  # send uses JSON + X-CSRFToken header; GET poll needs no CSRF
+    # chat send (POST) is CSRF-protected via the X-CSRFToken header the client
+    # sends (see chat.html); GET poll/inbox need no token. No exemption.
 
     @app.context_processor
     def inject_notifications():

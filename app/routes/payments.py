@@ -113,27 +113,45 @@ def esewa_initiate(application_id):
 def esewa_success():
     data = request.args.get('data', '')
     try:
-        decoded = base64.b64decode(data).decode()
         import json
-        resp = json.loads(decoded)
-        tx_uuid   = resp.get('transaction_uuid', '')
-        ref_id    = resp.get('ref_id', '')
-        status    = resp.get('status', '')
+        resp = json.loads(base64.b64decode(data).decode())
     except Exception:
         flash('Invalid eSewa callback.', 'danger')
         return redirect(url_for('brand.dashboard'))
 
-    pmt = Payment.query.filter_by(transaction_id=tx_uuid).first()
-    if pmt and status == 'COMPLETE':
-        pmt.status  = 'completed'
-        pmt.paid_at = datetime.utcnow()
-        db.session.commit()
-        flash('Payment successful via eSewa!', 'success')
-        return render_template('payments/success.html',
-                               pmt=pmt, method='eSewa', ref=ref_id)
+    # Verify the HMAC signature so a forged callback can't mark a payment paid.
+    secret = current_app.config.get('ESEWA_SECRET', '8gBm/:&EnhH.1/q')
+    signed = resp.get('signed_field_names', '')
+    try:
+        expected = _esewa_signature(secret, resp, signed) if signed else ''
+    except Exception:
+        expected = ''
+    if not signed or not hmac.compare_digest(expected, str(resp.get('signature', ''))):
+        flash('eSewa signature verification failed.', 'danger')
+        return redirect(url_for('brand.dashboard'))
 
-    flash('eSewa payment not confirmed.', 'warning')
-    return redirect(url_for('brand.dashboard'))
+    tx_uuid = resp.get('transaction_uuid', '')
+    ref_id  = resp.get('transaction_code') or resp.get('ref_id', '')
+    status  = resp.get('status', '')
+    pmt = Payment.query.filter_by(transaction_id=tx_uuid).first()
+    if not pmt or status != 'COMPLETE':
+        flash('eSewa payment not confirmed.', 'warning')
+        return redirect(url_for('brand.dashboard'))
+
+    # Confirm the amount matches what we charged.
+    try:
+        paid = float(str(resp.get('total_amount', '0')).replace(',', ''))
+    except Exception:
+        paid = 0.0
+    if abs(paid - float(pmt.amount)) > 0.01:
+        flash('eSewa amount mismatch — payment rejected.', 'danger')
+        return redirect(url_for('brand.dashboard'))
+
+    pmt.status  = 'completed'
+    pmt.paid_at = datetime.utcnow()
+    db.session.commit()
+    flash('Payment successful via eSewa!', 'success')
+    return render_template('payments/success.html', pmt=pmt, method='eSewa', ref=ref_id)
 
 
 @payments_bp.route('/esewa/failed')
@@ -219,7 +237,11 @@ def khalti_verify():
                                  headers={'Authorization': f'Key {secret_key}'},
                                  timeout=10)
             data = resp.json()
-            if data.get('status') == 'Completed':
+            # Re-verify status AND that the paid amount matches what we charged
+            # (Khalti amounts are in paisa) — blocks amount-tampering.
+            expected_paisa = round(float(pmt.amount) * 100)
+            paid_paisa = int(data.get('total_amount', 0) or 0)
+            if data.get('status') == 'Completed' and paid_paisa == expected_paisa:
                 pmt.status  = 'completed'
                 pmt.paid_at = datetime.utcnow()
                 db.session.commit()

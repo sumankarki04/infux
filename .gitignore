@@ -18,3 +18,8 @@ Thumbs.db
 dist/
 build/
 *.egg-info/
+
+# local test scripts
+infux_smoke.py
+infux_sec_test.py
+tmp_*.db
