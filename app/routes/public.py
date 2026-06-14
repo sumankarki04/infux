@@ -29,6 +29,16 @@ NICHES = ['Tech', 'Fashion', 'Food', 'Travel', 'Fitness', 'Beauty',
 PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'Facebook']
 
 
+@public_bp.route('/health')
+def health():
+    from sqlalchemy import text
+    try:
+        db.session.execute(text('SELECT 1'))
+        return {'status': 'ok', 'db': 'connected'}, 200
+    except Exception as e:
+        return {'status': 'error', 'db': str(e)}, 500
+
+
 @public_bp.route('/')
 def home():
     top_influencers = Influencer.query.filter_by(verification_status='verified')\
