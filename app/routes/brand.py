@@ -139,7 +139,7 @@ def campaign_detail(campaign_id):
     br = current_user.brand
     campaign = Campaign.query.filter_by(campaign_id=campaign_id, brand_id=br.brand_id).first_or_404()
     reviewed_influencer_ids = {
-        r.campaign_id for r in
+        r.reviewee_id for r in
         Review.query.filter_by(reviewer_id=current_user.user_id,
                                 campaign_id=campaign_id).all()
     }

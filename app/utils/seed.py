@@ -1,3 +1,4 @@
+import os
 from app import db
 from app.models.user import User
 from app.models.influencer import Influencer
@@ -6,11 +7,31 @@ from app.models.campaign import Campaign
 from datetime import date, timedelta
 
 
+def _seed_admin_from_env():
+    """Create the admin from ADMIN_EMAIL/ADMIN_PASSWORD (used in production so no
+    weak default credentials are ever shipped). No-op if either is unset."""
+    email = os.environ.get('ADMIN_EMAIL')
+    password = os.environ.get('ADMIN_PASSWORD')
+    if not email or not password:
+        return
+    admin = User(email=email, user_type='admin',
+                 first_name='Site', last_name='Admin', city='Kathmandu')
+    admin.set_password(password)
+    db.session.add(admin)
+    db.session.commit()
+
+
 def seed_data():
     if User.query.count() > 0:
         return
 
-    # Admin
+    # Production must NOT get the weak demo admin (admin123) or sample accounts
+    # (pass123). Seed the admin from env only; demo data is dev-only.
+    if os.environ.get('FLASK_ENV') == 'production':
+        _seed_admin_from_env()
+        return
+
+    # Admin (dev only)
     admin = User(email='admin@infux.com', user_type='admin',
                  first_name='Admin', last_name='INFUX', city='Kathmandu')
     admin.set_password('admin123')
