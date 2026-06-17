@@ -39,7 +39,8 @@ def verify_instagram(username: str) -> dict:
             'verified':  True,
             'error':     None,
         }
-    except requests.RequestException as e:
+    except (requests.RequestException, ValueError) as e:
+        # ValueError covers a non-JSON response body (r.json() decode failure).
         return _stub('instagram', username, str(e))
 
 
@@ -78,7 +79,8 @@ def verify_tiktok(username: str) -> dict:
             'verified':  True,
             'error':     None,
         }
-    except requests.RequestException as e:
+    except (requests.RequestException, ValueError) as e:
+        # ValueError covers a non-JSON response body (r.json() decode failure).
         return _stub('tiktok', username, str(e))
 
 
