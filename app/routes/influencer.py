@@ -150,6 +150,7 @@ def my_applications():
 @influencer_bp.route('/verify-social', methods=['POST'])
 @login_required
 @require_influencer
+@limiter.limit("10 per hour")
 def verify_social():
     """Trigger live follower count verification from Instagram or TikTok."""
     from app.services.social import verify_instagram, verify_tiktok
