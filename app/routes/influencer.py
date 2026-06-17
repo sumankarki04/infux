@@ -101,6 +101,12 @@ def apply(campaign_id):
     inf = current_user.influencer
     campaign = db.get_or_404(Campaign, campaign_id)
 
+    # Only open campaigns accept applications. The browse list hides non-open
+    # campaigns, but the POST endpoint must enforce it too (direct POST bypass).
+    if campaign.status != 'open':
+        flash('This campaign is no longer accepting applications.', 'warning')
+        return redirect(url_for('influencer.browse_campaigns'))
+
     if Application.query.filter_by(campaign_id=campaign_id,
                                    influencer_id=inf.influencer_id).first():
         flash('Already applied.', 'warning')

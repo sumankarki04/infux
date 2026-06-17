@@ -156,6 +156,15 @@ def handle_application(application_id, action):
     if app.campaign.brand_id != current_user.brand.brand_id:
         flash('Not authorised.', 'danger')
         return redirect(url_for('brand.dashboard'))
+    if action not in ('accept', 'reject'):
+        flash('Invalid action.', 'danger')
+        return redirect(url_for('brand.campaign_detail', campaign_id=app.campaign_id))
+    # Decide once: a pending application can be accepted or rejected. Re-deciding
+    # an already-handled one is blocked so a paid/accepted application can't be
+    # flipped to rejected (which would orphan the payment).
+    if app.status != 'pending':
+        flash('This application has already been handled.', 'warning')
+        return redirect(url_for('brand.campaign_detail', campaign_id=app.campaign_id))
     from app.utils.notifications import notify
     if action == 'accept':
         app.status = 'accepted'
