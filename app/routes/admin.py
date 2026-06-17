@@ -124,6 +124,11 @@ def users():
 @require_admin
 def toggle_user(user_id):
     user = db.get_or_404(User, user_id)
+    # Never suspend an admin here — suspending yourself or the last admin would
+    # lock everyone out of the admin panel (login() rejects inactive accounts).
+    if user.user_type == 'admin':
+        flash('Admin accounts cannot be suspended.', 'danger')
+        return redirect(url_for('admin.users', type=user.user_type))
     user.is_active = not user.is_active
     db.session.commit()
     flash(f'User {"activated" if user.is_active else "suspended"}.', 'info')
