@@ -7,8 +7,18 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 _IS_PROD = os.environ.get('FLASK_ENV') == 'production'
 
+def _resolve_secret_key():
+    key = os.environ.get('SECRET_KEY')
+    if key:
+        return key
+    # A predictable fallback in production lets anyone forge session cookies.
+    if _IS_PROD:
+        raise RuntimeError('SECRET_KEY must be set in production')
+    return 'infux-dev-secret-change-in-production'
+
+
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'infux-dev-secret-change-in-production')
+    SECRET_KEY = _resolve_secret_key()
     DEBUG = not _IS_PROD
     TESTING = False
 
