@@ -15,7 +15,7 @@ def login():
     if current_user.is_authenticated:
         return _dashboard_redirect(current_user)
     if request.method == 'POST':
-        email    = clean(request.form.get('email', ''))
+        email    = clean(request.form.get('email', '')).lower()
         password = request.form.get('password', '')
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
@@ -37,7 +37,7 @@ def register():
         user_type    = clean(request.form.get('user_type', ''))
         first_name   = clean(request.form.get('first_name', ''))
         last_name    = clean(request.form.get('last_name', ''))
-        email        = clean(request.form.get('email', ''))
+        email        = clean(request.form.get('email', '')).lower()
         password     = request.form.get('password', '')
         confirm      = request.form.get('confirm_password', '')
         city         = clean(request.form.get('city', ''))
@@ -45,6 +45,9 @@ def register():
 
         if user_type not in ('brand', 'influencer'):
             flash('Invalid account type.', 'danger')
+            return render_template('auth/register.html')
+        if '@' not in email or '.' not in email:
+            flash('Enter a valid email address.', 'danger')
             return render_template('auth/register.html')
         if len(password) < 6:
             flash('Password must be at least 6 characters.', 'danger')
