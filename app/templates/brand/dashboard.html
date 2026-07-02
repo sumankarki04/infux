@@ -15,20 +15,22 @@
 
     <!-- Stats -->
     <div class="row g-3 mb-4">
-        {% for icon, label, val, color in [
-            ('bullhorn',       'Total Campaigns',     br.campaigns|length,                  '#7c3aed'),
-            ('paper-plane',    'Total Applications',  total_applications,                   '#f59e0b'),
-            ('check-circle',   'Active Campaigns',    br.campaigns|selectattr('status','eq','open')|list|length, '#16a34a'),
-            ('users',          'Creators Discovered', (br.campaigns|length * 3),            '#0ea5e9'),
+        {% for icon, label, val, color, link in [
+            ('bullhorn',       'Total Campaigns',     br.campaigns|length,                  '#7c3aed', url_for('brand.my_campaigns')),
+            ('paper-plane',    'Total Applications',  total_applications,                   '#f59e0b', url_for('brand.my_campaigns')),
+            ('check-circle',   'Active Campaigns',    br.campaigns|selectattr('status','eq','open')|list|length, '#16a34a', url_for('brand.my_campaigns', status='open')),
+            ('users',          'Creators Discovered', (br.campaigns|length * 3),            '#0ea5e9', url_for('public.discover')),
         ] %}
         <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
-            <div class="dash-stat text-center">
-                <div class="dash-stat-icon mx-auto mb-2" style="background:{{ color }}18;">
-                    <i class="fas fa-{{ icon }}" style="color:{{ color }};font-size:1.2rem;"></i>
+            <a href="{{ link }}" class="text-decoration-none" aria-label="{{ label }}">
+                <div class="dash-stat text-center h-100">
+                    <div class="dash-stat-icon mx-auto mb-2" style="background:{{ color }}18;">
+                        <i class="fas fa-{{ icon }}" style="color:{{ color }};font-size:1.2rem;"></i>
+                    </div>
+                    <div class="dash-stat-num">{{ val }}</div>
+                    <p class="text-muted small mb-0">{{ label }}</p>
                 </div>
-                <div class="dash-stat-num">{{ val }}</div>
-                <p class="text-muted small mb-0">{{ label }}</p>
-            </div>
+            </a>
         </div>
         {% endfor %}
     </div>
@@ -52,7 +54,7 @@
                             </thead>
                             <tbody>
                                 {% for c in campaigns %}
-                                <tr>
+                                <tr class="row-click" data-href="{{ url_for('brand.campaign_detail', campaign_id=c.campaign_id) }}">
                                     <td>
                                         <a href="{{ url_for('brand.campaign_detail', campaign_id=c.campaign_id) }}"
                                            class="fw-semibold text-decoration-none" style="color:var(--navy);">{{ c.title }}</a>

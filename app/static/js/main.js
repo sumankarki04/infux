@@ -86,6 +86,25 @@ if (typeof AOS !== 'undefined') {
     AOS.init({ duration: reduceMotion ? 0 : 700, once: true, offset: 60, disable: reduceMotion });
 }
 
+// Clickable rows & cards: <element class="row-click" data-href="/url">.
+// Inner links/buttons/forms keep their own behavior. Enter key works too.
+document.addEventListener('click', e => {
+    const el = e.target.closest('.row-click[data-href]');
+    if (!el) return;
+    if (e.target.closest('a, button, form, input, select, textarea, label')) return;
+    window.location.href = el.dataset.href;
+});
+document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const el = e.target.closest('.row-click[data-href]');
+    if (el && e.target === el) window.location.href = el.dataset.href;
+});
+// Make row-click elements keyboard-reachable
+document.querySelectorAll('.row-click[data-href]').forEach(el => {
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'link');
+});
+
 // Form submit loading state — disable submit + show spinner (prevents double-submit).
 // Skips forms whose submit button uses [data-confirm]. Uses safe DOM methods (no innerHTML).
 document.querySelectorAll('form').forEach(f => {

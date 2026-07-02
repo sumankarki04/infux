@@ -45,7 +45,8 @@
                 </div>
                 <div class="card-body px-4 pt-2">
                     {% for u in recent_users %}
-                    <div class="d-flex align-items-center gap-3 py-2 border-bottom border-1" style="border-color:#f1f5f9!important;">
+                    <div class="d-flex align-items-center gap-3 py-2 border-bottom border-1 row-click px-2"
+                         data-href="{{ url_for('admin.users', type=u.user_type) }}" style="border-color:#f1f5f9!important;">
                         <img src="{{ u.avatar_url() }}" class="rounded-circle flex-shrink-0"
                              style="width:36px;height:36px;object-fit:cover;" alt="{{ u.full_name() }}">
                         <div class="flex-grow-1">
@@ -72,7 +73,8 @@
                 </div>
                 <div class="card-body px-4 pt-2">
                     {% for c in recent_campaigns %}
-                    <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-1" style="border-color:#f1f5f9!important;">
+                    <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-1 row-click px-2"
+                         data-href="{{ url_for('admin.campaigns', status=c.status) }}" style="border-color:#f1f5f9!important;">
                         <div>
                             <div class="fw-semibold small" style="color:var(--navy);">{{ c.title }}</div>
                             <div class="text-muted" style="font-size:.75rem;">{{ c.brand.company_name }} · Rs. {{ '{:,.0f}'.format(c.budget) }}</div>

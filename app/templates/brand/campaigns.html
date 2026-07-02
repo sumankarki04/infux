@@ -36,7 +36,8 @@
     <div class="row g-3">
         {% for c in campaigns %}
         <div class="col-md-6" data-aos="fade-up" data-aos-delay="{{ loop.index0 % 2 * 60 }}">
-            <div class="campaign-card h-100">
+            <div class="campaign-card h-100 row-click"
+                 data-href="{{ url_for('brand.campaign_detail', campaign_id=c.campaign_id) }}">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
                         <h6 class="fw-bold mb-1">

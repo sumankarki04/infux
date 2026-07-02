@@ -44,7 +44,8 @@
     <div class="row g-3">
         {% for c in campaigns %}
         <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index0 % 3 * 60 }}">
-            <div class="campaign-card h-100 d-flex flex-column">
+            <div class="campaign-card h-100 d-flex flex-column row-click"
+                 data-href="{% if current_user.is_authenticated and current_user.user_type == 'influencer' %}{{ url_for('influencer.browse_campaigns') }}{% elif current_user.is_authenticated %}{{ url_for('public.campaigns') }}{% else %}{{ url_for('auth.register') }}{% endif %}">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div class="flex-1">
                         <h6 class="fw-bold mb-1">{{ c.title }}</h6>

@@ -801,3 +801,40 @@ a:focus-visible { outline-offset: 3px; }
   }
   .hero-orb, .hero-creator-card { animation: none !important; }
 }
+
+/* ══════════════════════════════════════════
+   CLICKABILITY LAYER — row-click, tile links,
+   focus rings (UX pass)
+══════════════════════════════════════════ */
+
+/* clickable rows / cards */
+.row-click { cursor: pointer; transition: background-color .15s ease, box-shadow .2s ease, transform .2s ease; }
+.row-click:hover { background: #faf8ff; }
+.row-click:focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+
+/* clickable campaign cards lift on hover */
+.campaign-card.row-click:hover {
+  background: #fff;
+  box-shadow: 0 14px 40px rgba(124,58,237,.16);
+  transform: translateY(-3px);
+  border-color: rgba(124,58,237,.35);
+}
+
+/* stat tiles that link somewhere */
+a .dash-stat, .dash-stat.row-click { transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease; }
+a:hover .dash-stat, .dash-stat.row-click:hover {
+  box-shadow: 0 12px 32px rgba(124,58,237,.18);
+  transform: translateY(-3px);
+  border-color: rgba(124,58,237,.4);
+}
+
+/* visible keyboard focus everywhere interactive */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--violet);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* list rows inside dashboard cards */
+.hover-row { cursor: pointer; border-radius: 10px; transition: background-color .15s ease; }
+.hover-row:hover { background: #faf8ff; }
